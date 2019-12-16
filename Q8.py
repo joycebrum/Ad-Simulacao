@@ -23,7 +23,9 @@ isFilaUnica = True
 preemptive = False
 
 eventos = SLinkedList()
-clientes = queue.PriorityQueue(7000)
+clientesPrio = queue.Queue()
+clientesNPrio = queue.Queue()
+#clientes = queue.PriorityQueue(7000)
 servidor = None
 
 def nextArrival(la):
@@ -36,7 +38,8 @@ def chegada(arrivedEvent, la):
     global actualTime
     updateNextArrival(arrivedEvent.priority, la)
     clientData = ClientData(arrivedEvent.priority, actualTime, -1, -1)
-    checkServer(clientData)
+    cliente = Client(arrivedEvent.priority, clientData)
+    checkServer(cliente)
     
 def updateNextArrival(priority, la):
     nextA = nextArrival(la)
@@ -49,41 +52,59 @@ def updateNextExit(tempoExecucao, nextClient):
 
 def saida(exitEvent, mi):
     global servidor
-    servidor.console()
-    if not clientes.empty() :
-        nextClient = clientes.get()
+    servidor.clientData.console()
+    if not clientesPrio.empty() :
+        print("pegando um cliente prioritario:")
+        nextClient = clientesPrio.get()
         print("saidaaaaaa", nextClient)
-        nextClient.console()
+        nextClient.clientData.console()
         serverClient(nextClient)
     else:
-        servidor = None
-        print("else")
+        if not clientesNPrio.empty():
+            print("pegando um cliente nao prioritario:")
+            nextClient = clientesNPrio.get()
+            print("saidaaaaaa", nextClient)
+            nextClient.clientData.console()
+            serverClient(nextClient)
+        else:
+            servidor = None
+            print("else")
     
-def checkServer(clientData):
+def checkServer(cliente):
     global servidor
-    global clientes
+    global clientesPrio
+    global clientesNPrio
     if servidor == None:
-        serverClient(clientData)
-    elif preemptive and clientData.priority < servidor.priority:
-        interrupt(clientData)
+        serverClient(cliente)
+    elif preemptive and cliente.priority < servidor.priority:
+        interrupt(cliente)
     else:
-        clientes.put(clientData.priority, Client(clientData.priority, clientData))
+        print("adicionando cliente criado: ", cliente.priority, Client(cliente.priority, cliente.clientData))
+        if cliente.priority ==0:
+            clientesPrio.put(Client(cliente.priority, cliente.clientData))
+        else:
+            clientesNPrio.put(Client(cliente.priority, cliente.clientData))
     
-def interrupt(clientData):
+def interrupt(cliente):
     executedTime = actualTime - servidor.lastExecutedTime
-    servidor.timeRemaining = servidor.timeRemaining - executedTime
+    servidor.clientData.timeRemaining = servidor.clientData.timeRemaining - executedTime
     print("interupt", servidor)
-    servidor.console()
-    clientes.put(servidor.priority, servidor)
-    serverClient(clientData)
+    servidor.clientData.console()
+    print("adicionando: ", servidor)
+    if servidor.priority ==0:
+        clientesPrio.put(servidor)
+    else:
+        clientesNPrio.put(servidor)
+    #clientes.put(servidor.priority, servidor)
+    serverClient(cliente)
     
 def serverClient(nextClient):
     global actualTime
     global servidor
-    tempoExecucao = nextClient.timeRemaining
+    tempoExecucao = nextClient.clientData.timeRemaining
     if tempoExecucao < 0:
         tempoExecucao = nextService(mi)
-    nextClient.timeRemaining = tempoExecucao
+    nextClient.clientData.timeRemaining = tempoExecucao
     servidor = nextClient
     #servidor.timeRemaining = tempoExecucao
     updateNextExit(tempoExecucao, nextClient)
