@@ -16,7 +16,7 @@ class ClientData :
     def console(self):
         print("prioridade: ", self.priority, " arrivalTime: ", self.arrivalTime, " timeRemaining: ", self.timeRemaining, " lastExecutedTime: ", self.lastExecutedTime)
 
-Client = namedtuple("Client", "priority clientData")
+Client = namedtuple("Client", "priority id clientData")
 actualTime = 0
 
 isFilaUnica = True
@@ -25,7 +25,10 @@ preemptive = False
 eventos = SLinkedList()
 clientesPrio = queue.Queue()
 clientesNPrio = queue.Queue()
-#clientes = queue.PriorityQueue(7000)
+
+globalId = 0
+
+queueTime = {}
 servidor = None
 
 def nextArrival(la):
@@ -36,9 +39,11 @@ def nextService(mi):
 
 def chegada(arrivedEvent, la):
     global actualTime
+    global globalId
     updateNextArrival(arrivedEvent.priority, la)
     clientData = ClientData(arrivedEvent.priority, actualTime, -1, -1)
-    cliente = Client(arrivedEvent.priority, clientData)
+    cliente = Client(arrivedEvent.priority, globalId, clientData)
+    globalId+=1
     checkServer(cliente)
     
 def updateNextArrival(priority, la):
@@ -52,23 +57,36 @@ def updateNextExit(tempoExecucao, nextClient):
 
 def saida(exitEvent, mi):
     global servidor
+    print("o cara: ", Client(servidor.priority, servidor.id, servidor.clientData), " saiu")
     servidor.clientData.console()
+    
+    #fazendo conta do tempo medio do cara que ta saindo
+    if servidor.clientData.lastExecutedTime == -1:
+        executedTime = actualTime
+    else:
+        executedTime = actualTime - servidor.clientData.lastExecutedTime
+    if servidor.id in queueTime:
+        queueTime[servidor.id] += executedTime
+    else:
+        queueTime[servidor.id] = executedTime
+    #terminando conta do tempo medio
+        
     if not clientesPrio.empty() :
-        print("pegando um cliente prioritario:")
+        #print("pegando um cliente prioritario:")
         nextClient = clientesPrio.get()
-        print("saidaaaaaa", nextClient)
+        #print("saidaaaaaa", nextClient)
         nextClient.clientData.console()
         serverClient(nextClient)
     else:
         if not clientesNPrio.empty():
-            print("pegando um cliente nao prioritario:")
+            #print("pegando um cliente nao prioritario:")
             nextClient = clientesNPrio.get()
-            print("saidaaaaaa", nextClient)
+            #print("saidaaaaaa", nextClient)
             nextClient.clientData.console()
             serverClient(nextClient)
         else:
             servidor = None
-            print("else")
+            #print("else")
     
 def checkServer(cliente):
     global servidor
@@ -79,18 +97,32 @@ def checkServer(cliente):
     elif preemptive and cliente.priority < servidor.priority:
         interrupt(cliente)
     else:
-        print("adicionando cliente criado: ", cliente.priority, Client(cliente.priority, cliente.clientData))
+        #print("adicionando cliente criado: ", cliente.priority, Client(cliente.priority, cliente.id, cliente.clientData))
         if cliente.priority ==0:
-            clientesPrio.put(Client(cliente.priority, cliente.clientData))
+            clientesPrio.put(Client(cliente.priority,cliente.id, cliente.clientData))
         else:
-            clientesNPrio.put(Client(cliente.priority, cliente.clientData))
+            clientesNPrio.put(Client(cliente.priority,cliente.id, cliente.clientData))
     
 def interrupt(cliente):
-    executedTime = actualTime - servidor.lastExecutedTime
+    print("o cara: ", Client(cliente.priority, cliente.id, cliente.clientData), " interrompeu")
+    print("o cara: ", Client(servidor.priority, servidor.id, servidor.clientData), " foi imterrompido")
+    
+    if servidor.clientData.lastExecutedTime == -1:
+        executedTime = actualTime
+    else:
+        executedTime = actualTime - servidor.clientData.lastExecutedTime
+    
+    #fazendo conta do tempo medio do cara que ta saindo
+    if servidor.id in queueTime:
+        queueTime[servidor.id] += executedTime
+    else:
+        queueTime[servidor.id] = executedTime
+    #terminando conta do tempo medio
+    
     servidor.clientData.timeRemaining = servidor.clientData.timeRemaining - executedTime
-    print("interupt", servidor)
+    #print("interupt", servidor)
     servidor.clientData.console()
-    print("adicionando: ", servidor)
+    #print("adicionando: ", servidor)
     if servidor.priority ==0:
         clientesPrio.put(servidor)
     else:
@@ -101,6 +133,8 @@ def interrupt(cliente):
 def serverClient(nextClient):
     global actualTime
     global servidor
+    print("o cara: ", Client(nextClient.priority, nextClient.id, nextClient.clientData), " entrou")
+    
     tempoExecucao = nextClient.clientData.timeRemaining
     if tempoExecucao < 0:
         tempoExecucao = nextService(mi)
@@ -128,7 +162,12 @@ def main():
                 #print(actualTime, "saida")
                 saida(eventoAtual, mi)
         #print('\n')
+    tempoMediaNaFila = 0
+    for tempoi in queueTime :
+        tempoMediaNaFila=tempoMediaNaFila+tempoi
+    tempoMediaNaFila = tempoMediaNaFila/len(queueTime)
     print("fim")
+    print("tempo Medio na fila: ", tempoMediaNaFila)
     
     
 main()
