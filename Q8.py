@@ -57,7 +57,7 @@ def updateNextExit(tempoExecucao, nextClient):
 
 def saida(exitEvent, mi):
     global servidor
-    print("o cara: ", Client(servidor.priority, servidor.id, servidor.clientData), " saiu")
+    printCliente(servidor, "saiu")
     servidor.clientData.console()
     
     #fazendo conta do tempo medio do cara que ta saindo
@@ -104,8 +104,8 @@ def checkServer(cliente):
             clientesNPrio.put(Client(cliente.priority,cliente.id, cliente.clientData))
     
 def interrupt(cliente):
-    print("o cara: ", Client(cliente.priority, cliente.id, cliente.clientData), " interrompeu")
-    print("o cara: ", Client(servidor.priority, servidor.id, servidor.clientData), " foi imterrompido")
+    printCliente(cliente, "interrompeu")
+    printCliente(servidor, "foi interrompido")
     
     if servidor.clientData.lastExecutedTime == -1:
         executedTime = actualTime
@@ -133,21 +133,24 @@ def interrupt(cliente):
 def serverClient(nextClient):
     global actualTime
     global servidor
-    print("o cara: ", Client(nextClient.priority, nextClient.id, nextClient.clientData), " entrou")
     
     tempoExecucao = nextClient.clientData.timeRemaining
     if tempoExecucao < 0:
         tempoExecucao = nextService(mi)
     nextClient.clientData.timeRemaining = tempoExecucao
+    nextClient.clientData.lastExecutedTime = actualTime
     servidor = nextClient
     #servidor.timeRemaining = tempoExecucao
     updateNextExit(tempoExecucao, nextClient)
+    
+    printCliente(nextClient, "entrou no servidor")
 
-def main():
+def filaUnica(la1, mi1):
     global actualTime
-    actualTime = 0
     global la
     global mi
+    inicializaGlobalVariables(la1, mi1)
+    
     i = 0
     updateNextArrival(0, la)
     while i < 5:
@@ -173,5 +176,25 @@ def main():
     print("fim")
     print("tempo Medio na fila: ", tempoMediaNaFila)
     
-    
+
+def inicializaGlobalVariables(la1, mi1):
+    global actualTime, la, mi, eventos, preemptive, clientesPrio, clientesNPrio, isFilaUnica
+    actualTime = 0
+    la = la1
+    mi = mi1
+    preemptive = False
+    isFilaUnica = True
+
+    eventos = SLinkedList()
+    clientesPrio = queue.Queue()
+    clientesNPrio = queue.Queue()
+
+def main():
+    filaUnica(1/2,1/2)
+
+def printCliente(cliente, evento):
+    print(evento, " no instante: ", actualTime, "o cara de id: ",  cliente.id)
+    cliente.clientData.console()
+    print("\n")
+
 main()
