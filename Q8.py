@@ -165,7 +165,11 @@ def main():
     tempoMediaNaFila = 0
     for tempoi in queueTime :
         tempoMediaNaFila=tempoMediaNaFila+tempoi
-    tempoMediaNaFila = tempoMediaNaFila/len(queueTime)
+    
+    if len(queueTime) > 0:
+        tempoMediaNaFila = tempoMediaNaFila/len(queueTime)
+    else:
+        tempoMediaNaFila = 0
     print("fim")
     print("tempo Medio na fila: ", tempoMediaNaFila)
     
