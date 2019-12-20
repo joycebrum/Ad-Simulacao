@@ -2,6 +2,7 @@ from numpy.random import exponential
 from collections import namedtuple
 
 from LinkedList import SLinkedList
+from calculosMedia import calculaTempoMedio
 import queue
 
 la = 1/2
@@ -14,7 +15,7 @@ class ClientData :
         self.timeRemaining = timeRemaining 
         self.lastExecutedTime = lastExecutedTime
     def console(self):
-        print("prioridade: ", self.priority, " arrivalTime: ", self.arrivalTime, " timeRemaining: ", self.timeRemaining, " lastExecutedTime: ", self.lastExecutedTime)
+        print("prioridade: ", self.priority, " arrivalTime: ", round(self.arrivalTime,2), " timeRemaining: ", round(self.timeRemaining,2), " lastExecutedTime: ", round(self.lastExecutedTime,2))
 
 Client = namedtuple("Client", "priority id clientData")
 actualTime = 0
@@ -43,8 +44,10 @@ def chegada(arrivedEvent, la):
     updateNextArrival(arrivedEvent.priority, la)
     clientData = ClientData(arrivedEvent.priority, actualTime, -1, -1)
     cliente = Client(arrivedEvent.priority, globalId, clientData)
+    printCliente(cliente, "chegou")
     globalId+=1
     checkServer(cliente)
+    
     
 def updateNextArrival(priority, la):
     nextA = nextArrival(la)
@@ -58,7 +61,6 @@ def updateNextExit(tempoExecucao, nextClient):
 def saida(exitEvent, mi):
     global servidor
     printCliente(servidor, "saiu")
-    servidor.clientData.console()
     
     #fazendo conta do tempo medio do cara que ta saindo
     if servidor.clientData.lastExecutedTime == -1:
@@ -75,7 +77,6 @@ def saida(exitEvent, mi):
         #print("pegando um cliente prioritario:")
         nextClient = clientesPrio.get()
         #print("saidaaaaaa", nextClient)
-        nextClient.clientData.console()
         serverClient(nextClient)
     else:
         if not clientesNPrio.empty():
@@ -143,7 +144,7 @@ def serverClient(nextClient):
     #servidor.timeRemaining = tempoExecucao
     updateNextExit(tempoExecucao, nextClient)
     
-    printCliente(nextClient, "entrou no servidor")
+    printCliente(nextClient, "executou")
 
 def filaUnica(la1, mi1):
     global actualTime
@@ -158,23 +159,15 @@ def filaUnica(la1, mi1):
         if not eventos.empty():
             eventoAtual = eventos.pop_front()
             actualTime = eventoAtual.time
+            print("---------------------Instante: ", actualTime, "----------------------------\n")
             if (eventoAtual.event == "chegada"):
-                #print(actualTime, "chegada")
                 chegada(eventoAtual, la)
             else:            
-                #print(actualTime, "saida")
                 saida(eventoAtual, mi)
-        #print('\n')
-    tempoMediaNaFila = 0
-    for tempoi in queueTime :
-        tempoMediaNaFila=tempoMediaNaFila+tempoi
-    
-    if len(queueTime) > 0:
-        tempoMediaNaFila = tempoMediaNaFila/len(queueTime)
-    else:
-        tempoMediaNaFila = 0
-    print("fim")
-    print("tempo Medio na fila: ", tempoMediaNaFila)
+            printDadosSistema()
+    tempoMedioNaFila = calculaTempoMedio(queueTime)
+    print(" ---------- Medias")
+    print("tempo Medio na fila: ", tempoMedioNaFila)
     
 
 def inicializaGlobalVariables(la1, mi1):
@@ -193,8 +186,23 @@ def main():
     filaUnica(1/2,1/2)
 
 def printCliente(cliente, evento):
-    print(evento, " no instante: ", actualTime, "o cara de id: ",  cliente.id)
+    print("o cara de id: ",  cliente.id, evento)
     cliente.clientData.console()
     print("\n")
-
+def printDadosSistema():
+    if not isFilaUnica:
+        print('Fila Alta Prioridade: ', end = '')
+        printDadosClientFila(clientesNPrio)
+    print('Fila Baixa Prioridade: ', end = '')
+    printDadosClientFila(clientesPrio)
+    if servidor != None:
+        print('Servidor: {C:', servidor.clientData.arrivalTime, ", Xr:", servidor.clientData.timeRemaining, "}\n")
+    else: 
+        print("servidor ocioso\n")
+    
+def printDadosClientFila(queue):
+    print("[ ", end = '')
+    for client in queue.queue:
+        print("{C:", client.clientData.arrivalTime, ", Xr:", client.clientData.timeRemaining ,"} ", end = '')
+    print("]")
 main()
