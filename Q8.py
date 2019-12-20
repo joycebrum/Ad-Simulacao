@@ -11,8 +11,11 @@ import queue
 BAIXA = 1
 ALTA = 0
 
-la = 1/2
-mi = 1/2
+la1 = 0
+mi1 = 0
+la2 = 0
+mi2 = 0
+
 todosClientes = []
 Evento = namedtuple("Evento", "time event priority") 
 class ClientData :
@@ -86,20 +89,15 @@ def saida(exitEvent, mi):
     #terminando conta do tempo medio
         
     if not clientesPrio.empty() :
-        #print("pegando um cliente prioritario:")
         nextClient = clientesPrio.get()
-        #print("saidaaaaaa", nextClient)
         serverClient(nextClient)
     else:
         if not clientesNPrio.empty():
-            #print("pegando um cliente nao prioritario:")
             nextClient = clientesNPrio.get()
-            #print("saidaaaaaa", nextClient)
             nextClient.clientData.console()
             serverClient(nextClient)
         else:
             servidor = None
-            #print("else")
     
 def checkServer(cliente):
     global servidor
@@ -110,13 +108,10 @@ def checkServer(cliente):
     elif preemptive and cliente.priority < servidor.priority:
         interrupt(cliente)
     else:
-        #print("adicionando cliente criado: ", cliente.priority, Client(cliente.priority, cliente.id, cliente.clientData))
         if cliente.priority == ALTA:
             clientesPrio.put(Client(cliente.priority,cliente.id, cliente.clientData))
         else:
-            clientesNPrio.put(Client(cliente.priority,cliente.id, cliente.clientData))
-        #servidor.clientData.timeRemaining = servidor.clientData.timeRemaining - executedTime
-    
+             clientesNPrio.put(Client(cliente.priority,cliente.id, cliente.clientData))
 
 def interrupt(cliente):
     printCliente(cliente, "interrompeu")
@@ -133,7 +128,6 @@ def interrupt(cliente):
         clientesPrio.put(servidor)
     else:
         clientesNPrio.put(servidor)
-    #clientes.put(servidor.priority, servidor)
     serverClient(cliente)
     
 def serverClient(nextClient):
@@ -142,10 +136,9 @@ def serverClient(nextClient):
     
     tempoExecucao = nextClient.clientData.getTimeRemaining()
     if tempoExecucao < 0:
-        tempoExecucao = nextService(mi)
+        tempoExecucao = nextService(mi1)
     nextClient.clientData.service = tempoExecucao
     servidor = nextClient
-    #servidor.timeRemaining = tempoExecucao
     updateNextExit(tempoExecucao, nextClient)
     
     printCliente(nextClient, "executou")
@@ -165,15 +158,12 @@ def updateTimeVariables():
     updateTempoEspera(clientesNPrio.queue, getExecutedTime())
     
     
-
 def filaUnica(la1, mi1, tamanho):
-    global actualTime, previousTime
-    global la
-    global mi
-    inicializaGlobalVariables(la1, mi1)
-    
+    global actualTime, previousTime, preempitve, isFilaUnica
+    isFilaUnica = True
+    preemptive = False
     i = 0
-    updateNextArrival(BAIXA, la)
+    updateNextArrival(BAIXA, la1)
     while i < tamanho:
         i+=1
         if not eventos.empty():
@@ -183,30 +173,47 @@ def filaUnica(la1, mi1, tamanho):
             print("---------------------Instante: ", actualTime, "----------------------------\n")
             updateTimeVariables()
             if (eventoAtual.event == "chegada"):
-                chegada(eventoAtual, la)
+                chegada(eventoAtual, la1)
             else:            
-                saida(eventoAtual, mi)
+                saida(eventoAtual, mi1)
             printDadosSistema()
     tempoMedioNaFila = calculaTempoMedio(queueTime)
     print(" ---------- Medias")
     print("E[W] = ", tempoMedioNaFila)
     print("E[T] = ", numeroMedioPessoasNaFila(todosClientes, actualTime))
-    
 
-def inicializaGlobalVariables(la1, mi1):
-    global actualTime, la, mi, eventos, preemptive, clientesPrio, clientesNPrio, isFilaUnica
+def filaDuplaComPreempcao(la1, la2, mi1, mi2, tamanho):
+    global actualTime, previousTime, preempitve, isFilaUnica
+    isFilaUnica = False
+    preemptive = True
+    
+    print(1)
+
+def inicializaGlobalVariables(lambda1, lambda2, mii1, mii2):
+    global actualTime, la1, la2, mi1, mi2, eventos, clientesPrio, clientesNPrio
     actualTime = 0
-    la = la1
-    mi = mi1
-    preemptive = False
-    isFilaUnica = True
+    la1 = lambda1
+    mi1 = mii1
+    la2 = lambda2
+    mi2 = mii2
 
     eventos = SLinkedList()
     clientesPrio = queue.Queue()
     clientesNPrio = queue.Queue()
 
 def main():
-    filaUnica(1/10,1/2, 100)
+    global la
+    global mi
+    la1 = 1/20 #0.05
+    mi1 = 1
+    la2 = 1/5 #0.2
+    mi2 = 1/2 #0.5
+    
+    tamanho = 100
+    
+    inicializaGlobalVariables(la1, la2, mi1, mi2)
+    filaUnica(la1, mi1, tamanho)
+    filaDuplaComPreempcao(la1, la2, mi1, mi2, tamanho)
 
 def printCliente(cliente, evento):
     print("o cara de id: ",  cliente.id, evento)
