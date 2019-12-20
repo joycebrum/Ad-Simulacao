@@ -202,7 +202,7 @@ def filaDuplaComPreempcao(la1, la2, mi1, mi2, tamanho):
         eventos.console()
         if not eventos.empty():
             eventoAtual = eventos.pop_front()
-            previouseTime = actualTime
+            previousTime = actualTime
             actualTime = eventoAtual.time
             print("---------------------Instante: ", actualTime, "----------------------------\n")
             updateTimeVariables()
@@ -211,6 +211,7 @@ def filaDuplaComPreempcao(la1, la2, mi1, mi2, tamanho):
             else:            
                 saida(eventoAtual, mi1)
             printDadosSistema()
+        i = i +1
     tempoMedioNaFila = calculaTempoMedio(queueTime)
     print(" ---------- Medias")
     print("E[W] = ", tempoMedioNaFila)
