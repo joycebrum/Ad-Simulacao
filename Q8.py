@@ -7,6 +7,7 @@ from calculosMedia import updateTempoEspera
 from calculosMedia import updateTempoExecutando
 from calculosMedia import numeroMedioPessoasNaFila
 import queue
+import random
 
 BAIXA = 1
 ALTA = 0
@@ -72,6 +73,7 @@ def updateNextArrival(priority, la):
     nextA = nextArrival(la)
     proximaChegada = Evento(actualTime + nextA, "chegada", priority)
     eventos.add(proximaChegada)
+    
 def updateNextExit(tempoExecucao, nextClient):
     interruption = eventos.getInterruption(actualTime + tempoExecucao, nextClient.priority)
     if interruption == None or not preemptive: #so adiciona evento de saida se nao for ser interrompido
@@ -149,6 +151,7 @@ def getExecutedTime():
 def updateServerExecutedTime():
     if servidor != None and previousTime != -1:
         servidor.clientData.executed += getExecutedTime()
+        
 def updateTimeVariables():
     updateServerExecutedTime()
     if not isFilaUnica:
@@ -186,7 +189,32 @@ def filaDuplaComPreempcao(la1, la2, mi1, mi2, tamanho):
     global actualTime, previousTime, preempitve, isFilaUnica
     isFilaUnica = False
     preemptive = True
-    
+
+    i=0
+
+    if(random.random() <= la1/(la1+la2)):
+        updateNextArrival(ALTA, la1)
+    else:
+        updateNextArrival(BAIXA, la2)
+    eventos.console()
+    print("INICIO")
+    while i < tamanho:
+        eventos.console()
+        if not eventos.empty():
+            eventoAtual = eventos.pop_front()
+            previouseTime = actualTime
+            actualTime = eventoAtual.time
+            print("---------------------Instante: ", actualTime, "----------------------------\n")
+            updateTimeVariables()
+            if (eventoAtual.event == "chegada"):
+                chegada(eventoAtual, la1)
+            else:            
+                saida(eventoAtual, mi1)
+            printDadosSistema()
+    tempoMedioNaFila = calculaTempoMedio(queueTime)
+    print(" ---------- Medias")
+    print("E[W] = ", tempoMedioNaFila)
+    print("E[T] = ", numeroMedioPessoasNaFila(todosClientes, actualTime))
     print(1)
 
 def inicializaGlobalVariables(lambda1, lambda2, mii1, mii2):
@@ -204,15 +232,15 @@ def inicializaGlobalVariables(lambda1, lambda2, mii1, mii2):
 def main():
     global la
     global mi
-    la1 = 1/20 #0.05
-    mi1 = 1
-    la2 = 1/5 #0.2
-    mi2 = 1/2 #0.5
+    la1 = 20 #0.05
+    mi1 = 1 #1
+    la2 = 20 #0.2
+    mi2 = 1 #0.5
     
     tamanho = 100
     
     inicializaGlobalVariables(la1, la2, mi1, mi2)
-    filaUnica(la1, mi1, tamanho)
+    #filaUnica(la1, mi1, tamanho)
     filaDuplaComPreempcao(la1, la2, mi1, mi2, tamanho)
 
 def printCliente(cliente, evento):
