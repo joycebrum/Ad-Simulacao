@@ -183,11 +183,9 @@ def filaUnica(la1, mi1, tamanho):
             else:            
                 saida(eventoAtual, mi1)
             printDadosSistema()
-    tempoMedioNaFila = calculosMedia.calculaTempoMedio(queueTime)
+        plot.updateGrafos(clientesNPrio.queue, clientesPrio.queue, servidor, actualTime)
     print(" ---------- Medias")
-    print("E[W] = ", tempoMedioNaFila)
-    print("E[N] = ", calculosMedia.numeroMedioPessoasNoSistema(actualTime))
-    print("E[T] = ", calculosMedia.tempoMedioNoSistema(n_amostras))
+    calculosMedia.printTabelaFilaUnica(actualTime, totalClientes)
 
 
 def filaDuplaComPreempcao(la1, la2, mi1, mi2, tamanho):
@@ -215,9 +213,7 @@ def filaDuplaComPreempcao(la1, la2, mi1, mi2, tamanho):
                 saida(eventoAtual, mi1)
             printDadosSistema()
         plot.updateGrafos(clientesNPrio.queue, clientesPrio.queue, servidor, actualTime)
-    tempoMedioNaFila = calculosMedia.calculaTempoMedio(queueTime)
     print(" ---------- Medias")
-    print("E[W] = ", tempoMedioNaFila)
     calculosMedia.printTabelaFilaClasse(actualTime, totalClientes)
     plot.plotClientesSistema()
 
@@ -246,9 +242,7 @@ def filaDuplaSemPreempcao(la1, la2, mi1, mi2, tamanho):
                 saida(eventoAtual, mi1)
             printDadosSistema()
         plot.updateGrafos(clientesNPrio.queue, clientesPrio.queue, servidor, actualTime)
-    tempoMedioNaFila = calculosMedia.calculaTempoMedio(queueTime)
     print(" ---------- Medias")
-    print("E[W] = ", tempoMedioNaFila)
     calculosMedia.printTabelaFilaClasse(actualTime, totalClientes)
     plot.plotClientesSistema()
     
