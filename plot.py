@@ -27,6 +27,16 @@ Espera_X_Classe_Max = {0: 0, 1: 0}
 Espera_Y_Classe = {0: [0], 1: [0]}
 Espera_Y_Classe_Max = {0: 0, 1: 0}
 
+Trabalho_Residual_X = [0]
+Trabalho_Residual_X_Max = 0
+Trabalho_Residual_Y = [0]
+Trabalho_Residual_Y_Max = 0
+
+Trabalho_Residual_X_Classe = {0: [0], 1: [0]}
+Trabalho_Residual_X_Classe_Max = {0: 0, 1: 0}
+Trabalho_Residual_Y_Classe = {0: [0], 1: [0]}
+Trabalho_Residual_Y_Classe_Max = {0: 0, 1: 0}
+
 
 def getTotalPessoasNoSistema(fila1, fila2, servidor):
     if servidor != None:
@@ -54,6 +64,7 @@ def updateGrafos(filaNP, filaP, servidor, time):
     updateGrafoClientesClasse(filaNP,servidor,time, 1)
     
     updateGrafoEspera(filaNP, filaP, time)
+    updateGrafoTrabalhoResidual(servidor, time)
     
 def updateGrafoClientesClasse(fila, servidor, time, priority):
     global Clientes_X_Classe, Clientes_Y_Classe 
@@ -85,6 +96,32 @@ def updateGrafoEsperaClasse(fila, time, priority):
     Espera_Y_Classe[priority].append(clientesNaFila)
     if clientesNaFila > Espera_Y_Classe_Max[priority]:
         Espera_Y_Classe_Max[priority] = clientesNaFila
+        
+def updateGrafoTrabalhoResidual(servidor, time):
+    global Trabalho_Residual_X, Trabalho_Residual_Y
+    global Trabalho_Residual_X_Max, Trabalho_Residual_Y_Max
+    Trabalho_Residual_X.append(time)
+    Trabalho_Residual_X_Max = time
+    if servidor != None:
+        Trabalho_Residual_Y.append(servidor.clientData.getTimeRemaining())
+        if servidor.clientData.getTimeRemaining() > Trabalho_Residual_Y_Max:
+            Trabalho_Residual_Y_Max = servidor.clientData.getTimeRemaining()
+    else:
+        Trabalho_Residual_Y.append(0)
+    updateGrafoTrabalhoResidualClasse(servidor,time, 0)
+    updateGrafoTrabalhoResidualClasse(servidor,time, 1)
+    
+def updateGrafoTrabalhoResidualClasse(servidor, time, priority):
+    global Trabalho_Residual_X_Classe, Trabalho_Residual_Y_Classe 
+    global Trabalho_Residual_X_Classe_Max, Trabalho_Residual_Y_Classe_Max
+    Trabalho_Residual_X_Classe[priority].append(time)
+    Trabalho_Residual_X_Classe_Max[priority] = time
+    if servidor != None:
+        Trabalho_Residual_Y_Classe[priority].append(servidor.clientData.getTimeRemaining())
+        if servidor.clientData.getTimeRemaining() > Trabalho_Residual_Y_Classe_Max[priority]:
+            Trabalho_Residual_Y_Classe_Max[priority] = servidor.clientData.getTimeRemaining()
+    else:
+        Trabalho_Residual_Y_Classe[priority].append(0)
         
 def getArea(X, Y):
     area = 0

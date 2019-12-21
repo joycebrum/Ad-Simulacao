@@ -43,6 +43,12 @@ def printTabelaFilaClasse(actualTime, totalClientes):
     data = getDataClasse(actualTime, totalClientes, plot.Espera_X_Classe, plot.Espera_Y_Classe)
     printTabela(teams_list, data)
     
+    teams_list = ["E[Xr1]", "E[Xr2]"]
+    data = np.array([[round(tempoMedio(totalClientes[0], plot.Trabalho_Residual_X_Classe[0], plot.Trabalho_Residual_Y_Classe[0]),2),
+                      round(tempoMedio(totalClientes[1], plot.Trabalho_Residual_X_Classe[1], plot.Trabalho_Residual_Y_Classe[1]),2)
+                    ]])
+    printTabela(teams_list, data)
+    
     teams_list = ["E[U](2)", "E[U](3)", "E[Nq1]", "E[Nq2]", "E[U](4)"]
     data = np.array([[1, 2, 1, 0, 0]])
     printTabela(teams_list, data)
@@ -56,9 +62,9 @@ def printTabela(teams_list, data):
     print("\n")
 
 def getDataClasse(actualTime, totalClientes, X, Y):
-     return np.array([[round(numeroMedio(actualTime,X[0], Y[0]), 1), 
+     return np.array([[round(numeroMedio(actualTime,X[0], Y[0]), 2), 
                       round(tempoMedio(totalClientes[0], X[0], Y[0]),2),
-                      round(numeroMedio(actualTime,X[1], Y[1]), 1), 
+                      round(numeroMedio(actualTime,X[1], Y[1]), 2), 
                       round(tempoMedio(totalClientes[1],X[1], Y[1]),2)
                     ]])
 
