@@ -33,6 +33,10 @@ def printTabelaFilaUnica(actualTime, totalClientes):
                     ]])
     printTabela(teams_list, data)
     
+    teams_list = ["E[Xr]"]
+    data = np.array([[round(tempoMedio(totalClientes[1], plot.Trabalho_Residual_X, plot.Trabalho_Residual_Y), 2)]])
+    printTabela(teams_list,data)
+    
 
 def printTabelaFilaClasse(actualTime, totalClientes):
     teams_list = ["E[N1]", "E[T1]","E[N2]", "E[T2]"]
