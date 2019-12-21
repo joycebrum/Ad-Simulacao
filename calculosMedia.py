@@ -4,6 +4,7 @@ Created on Thu Dec 19 22:18:14 2019
 
 @author: joyce
 """
+import plot
 
 def updateTempoEspera(queue, step):
     for element in queue:
@@ -24,6 +25,11 @@ def calculaTempoMedio(queueTime):
         tempoMedioNaFila = 0
     return tempoMedioNaFila
 
-def numeroMedioPessoasNaFila(todosClientes, tempo):
+def numeroMedioPessoasNoSistema(tempoTotal):
     #TODO esse calculo está errado
-    return len(todosClientes)/tempo #area/tempoTotal
+    return plot.getArea()/tempoTotal
+
+def tempoMedioNoSistema(numeroClientes):
+    if numeroClientes == 0:
+        return 0
+    return plot.getArea()/numeroClientes
