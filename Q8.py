@@ -223,6 +223,40 @@ def filaDuplaComPreempcao(la1, la2, mi1, mi2, tamanho):
     print("E[N2] = ", calculosMedia.numeroMedioPessoasNoSistemaPorClasse(actualTime,1))
     print("E[T2] = ", calculosMedia.tempoMedioNoSistemaPorClasse(totalClientes[1],1))
     plot.plotClientesSistema()
+
+def filaDuplaSemPreempcao(la1, la2, mi1, mi2, tamanho):
+    global actualTime, previousTime, preemptive, isFilaUnica
+    global n_amostras
+    isFilaUnica = False
+    preemptive = False
+    if(random.random() <= la1/(la1+la2)):
+        updateNextArrival(ALTA, la1)
+    else:
+        updateNextArrival(BAIXA, la2)
+    eventos.console()
+    print("INICIO")
+    while n_amostras < tamanho:
+        eventos.console()
+        if not eventos.empty():
+            eventoAtual = eventos.pop_front()
+            previousTime = actualTime
+            actualTime = eventoAtual.time
+            print("---------------------Instante: ", actualTime, "----------------------------\n")
+            updateTimeVariables()
+            if (eventoAtual.event == "chegada"):
+                chegada(eventoAtual, la1)
+            else:            
+                saida(eventoAtual, mi1)
+            printDadosSistema()
+        plot.updateGrafoClientes(clientesNPrio.queue, clientesPrio.queue, servidor, actualTime)
+    tempoMedioNaFila = calculosMedia.calculaTempoMedio(queueTime)
+    print(" ---------- Medias")
+    print("E[W] = ", tempoMedioNaFila)
+    print("E[N1] = ", calculosMedia.numeroMedioPessoasNoSistemaPorClasse(actualTime,0))
+    print("E[T1] = ", calculosMedia.tempoMedioNoSistemaPorClasse(totalClientes[0],0))
+    print("E[N2] = ", calculosMedia.numeroMedioPessoasNoSistemaPorClasse(actualTime,1))
+    print("E[T2] = ", calculosMedia.tempoMedioNoSistemaPorClasse(totalClientes[1],1))
+    plot.plotClientesSistema()
     
 
 def inicializaGlobalVariables(lambda1, lambda2, mii1, mii2):
