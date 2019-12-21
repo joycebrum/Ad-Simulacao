@@ -6,6 +6,8 @@ Created on Thu Dec 19 22:18:14 2019
 """
 import plot
 import numpy as np
+from variables import ALTA
+from variables import BAIXA
 
 def updateTempoEspera(queue, step):
     for element in queue:
@@ -24,7 +26,13 @@ def numeroMedio(tempoTotal, X, Y):
     #TODO not implemented yet
     return plot.getArea(X, Y)/tempoTotal
 
-def printTabelaFilaUnica(actualTime, totalClientes):
+def Xr(totalClientes, classe):
+    return tempoMedio(totalClientes[classe], plot.Trabalho_Residual_X_Classe[classe], plot.Trabalho_Residual_Y_Classe[classe])
+
+def Nq(actualTime, classe):
+    return numeroMedio(actualTime,plot.Espera_X_Classe[classe], plot.Espera_Y_Classe[classe])
+
+def printTabelaFilaUnica(actualTime, totalClientes, ro):
     teams_list = ["E[N]", "E[T]", "E[Nq]", "E[W]"]
     data = np.array([[round( numeroMedio(actualTime, plot.Clientes_X, plot.Clientes_Y), 2), 
                       round( tempoMedio(totalClientes[1], plot.Clientes_X, plot.Clientes_Y), 2),
@@ -38,7 +46,7 @@ def printTabelaFilaUnica(actualTime, totalClientes):
     printTabela(teams_list,data)
     
 
-def printTabelaFilaClasse(actualTime, totalClientes):
+def printTabelaFilaClasse(actualTime, totalClientes, ro):
     teams_list = ["E[N1]", "E[T1]","E[N2]", "E[T2]"]
     data = getDataClasse(actualTime, totalClientes, plot.Clientes_X_Classe, plot.Clientes_Y_Classe)
     printTabela(teams_list, data)
@@ -48,13 +56,18 @@ def printTabelaFilaClasse(actualTime, totalClientes):
     printTabela(teams_list, data)
     
     teams_list = ["E[Xr1]", "E[Xr2]"]
-    data = np.array([[round(tempoMedio(totalClientes[0], plot.Trabalho_Residual_X_Classe[0], plot.Trabalho_Residual_Y_Classe[0]),2),
-                      round(tempoMedio(totalClientes[1], plot.Trabalho_Residual_X_Classe[1], plot.Trabalho_Residual_Y_Classe[1]),2)
+    data = np.array([[round(Xr(totalClientes, ALTA),2),
+                      round(Xr(totalClientes, BAIXA),2)
                     ]])
     printTabela(teams_list, data)
     
+    pXr = ro[BAIXA]*Xr(totalClientes,BAIXA) + ro[ALTA]*Xr(totalClientes, ALTA)
+    ros = ro[BAIXA] + ro[ALTA]
     teams_list = ["E[U](2)", "E[U](3)", "E[Nq1]", "E[Nq2]", "E[U](4)"]
-    data = np.array([[1, 2, 1, 0, 0]])
+    data = np.array([[round(pXr/(1-ros), 2), 0, 
+                      round(Nq(actualTime, ALTA), 2), 
+                      round(Nq(actualTime, BAIXA), 2), 0
+                    ]])
     printTabela(teams_list, data)
 
 def printTabela(teams_list, data):

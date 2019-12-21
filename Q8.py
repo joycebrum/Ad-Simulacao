@@ -6,9 +6,8 @@ import calculosMedia
 import queue
 import random
 import plot
-
-BAIXA = 1
-ALTA = 0
+from variables import ALTA
+from variables import BAIXA
 
 la1 = 0
 mi1 = 0
@@ -16,7 +15,9 @@ la2 = 0
 mi2 = 0
 
 todosClientes = []
-Evento = namedtuple("Evento", "time event priority") 
+Evento = namedtuple("Evento", "time event priority")
+
+tempoOcupado = [0,0] 
 class ClientData :
     def __init__(self, priority = 1, arrivalTime=-1, service = -1):
         self.priority = priority 
@@ -152,6 +153,12 @@ def serverClient(nextClient):
 def getExecutedTime():
     return actualTime - previousTime
 
+def getRo():
+    ro = [0,0]
+    ro[ALTA] = tempoOcupado[ALTA]/actualTime
+    ro[BAIXA] = tempoOcupado[BAIXA]/actualTime
+    return ro
+
 def updateServerExecutedTime():
     if servidor != None and previousTime != -1:
         servidor.clientData.executed += getExecutedTime()
@@ -164,18 +171,17 @@ def updateTimeVariables():
     calculosMedia.updateTempoExecutando(clientesNPrio.queue, getExecutedTime())
     calculosMedia.updateTempoEspera(clientesNPrio.queue, getExecutedTime())
     
-    
-def filaUnica(la1, mi1, tamanho):
+
+def loopPrincipal(tamanho):
     global actualTime, previousTime, preemptive, isFilaUnica
-    global n_amostras
-    isFilaUnica = True
-    preemptive = False
-    updateNextArrival(BAIXA, la1)
+    global n_amostras, tempoOcupado
     while n_amostras < tamanho:
         if not eventos.empty():
             eventoAtual = eventos.pop_front()
             previousTime = actualTime
             actualTime = eventoAtual.time
+            if servidor != None:
+                tempoOcupado[servidor.priority] += getExecutedTime()
             print("---------------------Instante: ", actualTime, "----------------------------\n")
             updateTimeVariables()
             if (eventoAtual.event == "chegada"):
@@ -184,8 +190,16 @@ def filaUnica(la1, mi1, tamanho):
                 saida(eventoAtual, mi1)
             printDadosSistema()
         plot.updateGrafos(clientesNPrio.queue, clientesPrio.queue, servidor, actualTime)
+
+def filaUnica(la1, mi1, tamanho):
+    global actualTime, previousTime, preemptive, isFilaUnica
+    global n_amostras
+    isFilaUnica = True
+    preemptive = False
+    updateNextArrival(BAIXA, la1)
+    loopPrincipal(tamanho)
     print(" ---------- Medias")
-    calculosMedia.printTabelaFilaUnica(actualTime, totalClientes)
+    calculosMedia.printTabelaFilaUnica(actualTime, totalClientes, getRo()[BAIXA])
 
 
 def filaDuplaComPreempcao(la1, la2, mi1, mi2, tamanho):
@@ -197,24 +211,9 @@ def filaDuplaComPreempcao(la1, la2, mi1, mi2, tamanho):
         updateNextArrival(ALTA, la1)
     else:
         updateNextArrival(BAIXA, la2)
-    eventos.console()
-    print("INICIO")
-    while n_amostras < tamanho:
-        eventos.console()
-        if not eventos.empty():
-            eventoAtual = eventos.pop_front()
-            previousTime = actualTime
-            actualTime = eventoAtual.time
-            print("---------------------Instante: ", actualTime, "----------------------------\n")
-            updateTimeVariables()
-            if (eventoAtual.event == "chegada"):
-                chegada(eventoAtual, la1)
-            else:            
-                saida(eventoAtual, mi1)
-            printDadosSistema()
-        plot.updateGrafos(clientesNPrio.queue, clientesPrio.queue, servidor, actualTime)
+    loopPrincipal(tamanho)
     print(" ---------- Medias")
-    calculosMedia.printTabelaFilaClasse(actualTime, totalClientes)
+    calculosMedia.printTabelaFilaClasse(actualTime, totalClientes, getRo())
     plot.plotClientesSistema()
 
 def filaDuplaSemPreempcao(la1, la2, mi1, mi2, tamanho):
@@ -226,24 +225,9 @@ def filaDuplaSemPreempcao(la1, la2, mi1, mi2, tamanho):
         updateNextArrival(ALTA, la1)
     else:
         updateNextArrival(BAIXA, la2)
-    eventos.console()
-    print("INICIO")
-    while n_amostras < tamanho:
-        eventos.console()
-        if not eventos.empty():
-            eventoAtual = eventos.pop_front()
-            previousTime = actualTime
-            actualTime = eventoAtual.time
-            print("---------------------Instante: ", actualTime, "----------------------------\n")
-            updateTimeVariables()
-            if (eventoAtual.event == "chegada"):
-                chegada(eventoAtual, la1)
-            else:            
-                saida(eventoAtual, mi1)
-            printDadosSistema()
-        plot.updateGrafos(clientesNPrio.queue, clientesPrio.queue, servidor, actualTime)
+    loopPrincipal(tamanho)
     print(" ---------- Medias")
-    calculosMedia.printTabelaFilaClasse(actualTime, totalClientes)
+    calculosMedia.printTabelaFilaClasse(actualTime, totalClientes, getRo())
     plot.plotClientesSistema()
     
 
