@@ -17,6 +17,16 @@ Clientes_X_Classe_Max = {0: 0, 1: 0}
 Clientes_Y_Classe = {0: [0], 1: [0]}
 Clientes_Y_Classe_Max = {0: 0, 1: 0}
 
+Espera_X = [0]
+Espera_X_Max = 0
+Espera_Y = [0]
+Espera_Y_Max = 0
+
+Espera_X_Classe = {0: [0], 1: [0]}
+Espera_X_Classe_Max = {0: 0, 1: 0}
+Espera_Y_Classe = {0: [0], 1: [0]}
+Espera_Y_Classe_Max = {0: 0, 1: 0}
+
 
 def getTotalPessoasNoSistema(fila1, fila2, servidor):
     if servidor != None:
@@ -32,7 +42,7 @@ def getTotalPessoasNoSistemaPorClasse(fila, servidor, priority):
     else:
         return 0
     
-def updateGrafoClientes(filaNP, filaP, servidor, time):
+def updateGrafos(filaNP, filaP, servidor, time):
     global Clientes_X, Clientes_Y, Clientes_X_Max, Clientes_Y_Max
     clientesNoSistema = getTotalPessoasNoSistema(filaNP, filaP, servidor)
     Clientes_X.append(time)
@@ -42,6 +52,8 @@ def updateGrafoClientes(filaNP, filaP, servidor, time):
         Clientes_Y_Max = clientesNoSistema
     updateGrafoClientesClasse(filaP,servidor,time, 0)
     updateGrafoClientesClasse(filaNP,servidor,time, 1)
+    
+    updateGrafoEspera(filaNP, filaP, servidor, time)
     
 def updateGrafoClientesClasse(fila, servidor, time, priority):
     global Clientes_X_Classe, Clientes_Y_Classe 
@@ -53,18 +65,32 @@ def updateGrafoClientesClasse(fila, servidor, time, priority):
     if clientesNoSistema > Clientes_Y_Classe_Max[priority]:
         Clientes_Y_Classe_Max[priority] = clientesNoSistema
         
-def getArea():
+def updateGrafoEspera(filaNP, filaP, servidor, time):
+    global Espera_X, Espera_Y, Espera_X_Max, Espera_Y_Max
+    clientesNoSistema = len(filaNP) + len(filaP)
+    Espera_X.append(time)
+    Espera_X_Max = time
+    Espera_Y.append(clientesNoSistema)
+    if clientesNoSistema > Clientes_Y_Max:
+        Espera_Y_Max = clientesNoSistema
+    updateGrafoEsperaClasse(filaP,servidor,time, 0)
+    updateGrafoEsperaClasse(filaNP,servidor,time, 1)
+    
+def updateGrafoEsperaClasse(fila, servidor, time, priority):
+    global Espera_X_Classe, Espera_Y_Classe 
+    global Espera_X_Classe_Max, Espera_Y_Classe_Max
+    clientesNaFila = len(fila)
+    Espera_X_Classe[priority].append(time)
+    Espera_X_Classe_Max[priority] = time
+    Espera_Y_Classe[priority].append(clientesNaFila)
+    if clientesNaFila > Espera_Y_Classe_Max[priority]:
+        Espera_Y_Classe_Max[priority] = clientesNaFila
+        
+def getArea(X, Y):
     area = 0
     for i in range(1, len(Clientes_X)):
-        dt = Clientes_X[i] - Clientes_X[i-1]
-        area += (Clientes_Y[i] - Clientes_Y[i-1])*dt
-    return area
-
-def getAreaPorClasse(priority):
-    area = 0
-    for i in range(1, len(Clientes_X_Classe[priority])):
-        dt = Clientes_X_Classe[priority][i] - Clientes_X_Classe[priority][i-1]
-        area += (Clientes_Y_Classe[priority][i] - Clientes_Y_Classe[priority][i-1])*dt
+        dt = X[i] - X[i-1]
+        area += (Y[i] - Y[i-1])*dt
     return area
 
 

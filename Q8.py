@@ -214,14 +214,11 @@ def filaDuplaComPreempcao(la1, la2, mi1, mi2, tamanho):
             else:            
                 saida(eventoAtual, mi1)
             printDadosSistema()
-        plot.updateGrafoClientes(clientesNPrio.queue, clientesPrio.queue, servidor, actualTime)
+        plot.updateGrafos(clientesNPrio.queue, clientesPrio.queue, servidor, actualTime)
     tempoMedioNaFila = calculosMedia.calculaTempoMedio(queueTime)
     print(" ---------- Medias")
     print("E[W] = ", tempoMedioNaFila)
-    print("E[N1] = ", calculosMedia.numeroMedioPessoasNoSistemaPorClasse(actualTime,0))
-    print("E[T1] = ", calculosMedia.tempoMedioNoSistemaPorClasse(totalClientes[0],0))
-    print("E[N2] = ", calculosMedia.numeroMedioPessoasNoSistemaPorClasse(actualTime,1))
-    print("E[T2] = ", calculosMedia.tempoMedioNoSistemaPorClasse(totalClientes[1],1))
+    calculosMedia.printTabelaFilaClasse(actualTime, totalClientes)
     plot.plotClientesSistema()
 
 def filaDuplaSemPreempcao(la1, la2, mi1, mi2, tamanho):
@@ -248,14 +245,11 @@ def filaDuplaSemPreempcao(la1, la2, mi1, mi2, tamanho):
             else:            
                 saida(eventoAtual, mi1)
             printDadosSistema()
-        plot.updateGrafoClientes(clientesNPrio.queue, clientesPrio.queue, servidor, actualTime)
+        plot.updateGrafos(clientesNPrio.queue, clientesPrio.queue, servidor, actualTime)
     tempoMedioNaFila = calculosMedia.calculaTempoMedio(queueTime)
     print(" ---------- Medias")
     print("E[W] = ", tempoMedioNaFila)
-    print("E[N1] = ", calculosMedia.numeroMedioPessoasNoSistemaPorClasse(actualTime,0))
-    print("E[T1] = ", calculosMedia.tempoMedioNoSistemaPorClasse(totalClientes[0],0))
-    print("E[N2] = ", calculosMedia.numeroMedioPessoasNoSistemaPorClasse(actualTime,1))
-    print("E[T2] = ", calculosMedia.tempoMedioNoSistemaPorClasse(totalClientes[1],1))
+    calculosMedia.printTabelaFilaClasse(actualTime, totalClientes)
     plot.plotClientesSistema()
     
 
