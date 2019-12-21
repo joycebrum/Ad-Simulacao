@@ -218,10 +218,10 @@ def filaDuplaComPreempcao(la1, la2, mi1, mi2, tamanho):
     tempoMedioNaFila = calculosMedia.calculaTempoMedio(queueTime)
     print(" ---------- Medias")
     print("E[W] = ", tempoMedioNaFila)
-    print("E[N1] = ", calculosMedia.numeroMedioPessoasNoSistema(actualTime))
-    print("E[T1] = ", calculosMedia.tempoMedioNoSistema(totalClientes[0]))
-    print("E[N2] = ", calculosMedia.numeroMedioPessoasNoSistema(actualTime))
-    print("E[T2] = ", calculosMedia.tempoMedioNoSistema(totalClientes[1]))
+    print("E[N1] = ", calculosMedia.numeroMedioPessoasNoSistemaPorClasse(actualTime,0))
+    print("E[T1] = ", calculosMedia.tempoMedioNoSistemaPorClasse(totalClientes[0],0))
+    print("E[N2] = ", calculosMedia.numeroMedioPessoasNoSistemaPorClasse(actualTime,1))
+    print("E[T2] = ", calculosMedia.tempoMedioNoSistemaPorClasse(totalClientes[1],1))
     plot.plotClientesSistema()
     
 

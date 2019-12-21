@@ -26,10 +26,19 @@ def calculaTempoMedio(queueTime):
     return tempoMedioNaFila
 
 def numeroMedioPessoasNoSistema(tempoTotal):
-    #TODO esse calculo está errado
     return plot.getArea()/tempoTotal
 
 def tempoMedioNoSistema(numeroClientes):
     if numeroClientes == 0:
         return 0
     return plot.getArea()/numeroClientes
+
+def numeroMedioPessoasNoSistemaPorClasse(tempoTotal, priority):
+    #TODO not implemented yet
+    return plot.getAreaPorClasse(priority)/tempoTotal
+
+def tempoMedioNoSistemaPorClasse(numeroClientes, priority):
+    #TODO not implemented yet
+    if numeroClientes == 0:
+        return 0
+    return plot.getAreaPorClasse(priority)/numeroClientes
