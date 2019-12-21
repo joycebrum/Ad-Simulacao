@@ -53,7 +53,7 @@ def updateGrafos(filaNP, filaP, servidor, time):
     updateGrafoClientesClasse(filaP,servidor,time, 0)
     updateGrafoClientesClasse(filaNP,servidor,time, 1)
     
-    updateGrafoEspera(filaNP, filaP, servidor, time)
+    updateGrafoEspera(filaNP, filaP, time)
     
 def updateGrafoClientesClasse(fila, servidor, time, priority):
     global Clientes_X_Classe, Clientes_Y_Classe 
@@ -65,18 +65,18 @@ def updateGrafoClientesClasse(fila, servidor, time, priority):
     if clientesNoSistema > Clientes_Y_Classe_Max[priority]:
         Clientes_Y_Classe_Max[priority] = clientesNoSistema
         
-def updateGrafoEspera(filaNP, filaP, servidor, time):
+def updateGrafoEspera(filaNP, filaP, time):
     global Espera_X, Espera_Y, Espera_X_Max, Espera_Y_Max
-    clientesNoSistema = len(filaNP) + len(filaP)
+    clientesNaFila = len(filaNP) + len(filaP)
     Espera_X.append(time)
     Espera_X_Max = time
-    Espera_Y.append(clientesNoSistema)
-    if clientesNoSistema > Clientes_Y_Max:
-        Espera_Y_Max = clientesNoSistema
-    updateGrafoEsperaClasse(filaP,servidor,time, 0)
-    updateGrafoEsperaClasse(filaNP,servidor,time, 1)
+    Espera_Y.append(clientesNaFila)
+    if clientesNaFila > Clientes_Y_Max:
+        Espera_Y_Max = clientesNaFila
+    updateGrafoEsperaClasse(filaP,time, 0)
+    updateGrafoEsperaClasse(filaNP,time, 1)
     
-def updateGrafoEsperaClasse(fila, servidor, time, priority):
+def updateGrafoEsperaClasse(fila, time, priority):
     global Espera_X_Classe, Espera_Y_Classe 
     global Espera_X_Classe_Max, Espera_Y_Classe_Max
     clientesNaFila = len(fila)
@@ -89,8 +89,8 @@ def updateGrafoEsperaClasse(fila, servidor, time, priority):
 def getArea(X, Y):
     area = 0
     for i in range(1, len(Clientes_X)):
-        dt = X[i] - X[i-1]
-        area += (Y[i] - Y[i-1])*dt
+        dt = abs(X[i] - X[i-1])
+        area += Y[i]*dt
     return area
 
 
