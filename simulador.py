@@ -61,6 +61,7 @@ servidor = None
 n_amostras = 0
 
 totalClientes = [0, 0]
+tamanho = 10
 
 def nextArrival(la):
     return exponential(1/la)
@@ -72,10 +73,11 @@ def chegada(arrivedEvent):
     global actualTime
     global globalId, n_amostras
     n_amostras += 1
-    if(random.random() <= la1/(la1+la2)):
-        updateNextArrival(ALTA, la1)
-    else:
-        updateNextArrival(BAIXA, la2)
+    if n_amostras < tamanho:
+        if(random.random() <= la1/(la1+la2)):
+            updateNextArrival(ALTA, la1)
+        else:
+            updateNextArrival(BAIXA, la2)
     clientData = ClientData(arrivedEvent.priority, actualTime, -1)
     cliente = Client(arrivedEvent.priority, globalId, clientData)
     if depuracao:
@@ -137,7 +139,7 @@ def interrupt(cliente):
     if depuracao:
         printCliente(cliente, "interrompeu")
         printCliente(servidor, "foi interrompido")
-   
+    eventos.removeIfExistExitEvent()
     #fazendo conta do tempo medio do cara que ta saindo
     if servidor.id in queueTime:
         queueTime[servidor.id] += getExecutedTime()
@@ -193,29 +195,28 @@ def updateTimeVariables():
 def loopPrincipal(tamanho):
     global actualTime, previousTime, preemptive, isFilaUnica
     global n_amostras, tempoOcupado
-    while n_amostras < tamanho:
-        if not eventos.empty():
-            eventoAtual = eventos.pop_front()
-            previousTime = actualTime
-            actualTime = eventoAtual.time
-            if servidor != None:
-                tempoOcupado[servidor.priority] += getExecutedTime()
-            if depuracao:
-                print("---------------------Instante: ", actualTime, "----------------------------\n")
-            updateTimeVariables()
-            if (eventoAtual.event == "chegada"):
-                chegada(eventoAtual)
-            else:            
-                saida(eventoAtual, mi1)
-            if depuracao :
-                printDadosSistema()
+    while not eventos.empty():
+        eventoAtual = eventos.pop_front()
+        previousTime = actualTime
+        actualTime = eventoAtual.time
+        if servidor != None:
+            tempoOcupado[servidor.priority] += getExecutedTime()
+        if depuracao:
+            print("---------------------Instante: ", actualTime, "----------------------------\n")
+        updateTimeVariables()
+        if (eventoAtual.event == "chegada"):
+            chegada(eventoAtual)
+        else:            
+            saida(eventoAtual, mi1)
+        if depuracao :
+            printDadosSistema()
         plot.updateGrafos(clientesNPrio.queue, clientesPrio.queue, servidor, actualTime)
     
     print("\n Tabela para os valores de lamda1, lamda2, mi1, mi2 = ", la1, la2, mi1, mi2)
     calculosMedia.printTabelaFilaClasse(actualTime, totalClientes, la1, la2, mi1,mi2, preemptive, isFilaUnica)
     plot.plotClientesSistema()
 
-def filaUnica(la1, mi1, tamanho):
+def filaUnica(la1, mi1):
     global actualTime, previousTime, preemptive, isFilaUnica
     global n_amostras
     isFilaUnica = True
@@ -224,7 +225,7 @@ def filaUnica(la1, mi1, tamanho):
     loopPrincipal(tamanho)
 
 
-def filaDuplaComPreempcao(la1, la2, mi1, mi2, tamanho):
+def filaDuplaComPreempcao(la1, la2, mi1, mi2):
     global actualTime, previousTime, preemptive, isFilaUnica
     global n_amostras
     isFilaUnica = False
@@ -235,7 +236,7 @@ def filaDuplaComPreempcao(la1, la2, mi1, mi2, tamanho):
         updateNextArrival(BAIXA, la2)
     loopPrincipal(tamanho)
 
-def filaDuplaSemPreempcao(la1, la2, mi1, mi2, tamanho):
+def filaDuplaSemPreempcao(la1, la2, mi1, mi2):
     global actualTime, previousTime, preemptive, isFilaUnica
     global n_amostras
     isFilaUnica = False
@@ -247,9 +248,10 @@ def filaDuplaSemPreempcao(la1, la2, mi1, mi2, tamanho):
     loopPrincipal(tamanho)
     
 
-def inicializaGlobalVariables(lambda1, lambda2, mii1, mii2, depuracaot):
+def inicializaGlobalVariables(lambda1, lambda2, mii1, mii2, depuracaot, tamanho_t):
     global actualTime, la1, la2, mi1, mi2, eventos, clientesPrio, clientesNPrio
-    global n_amostras, depuracao
+    global n_amostras, depuracao, todosClientes, tempoOcupado, servidor
+    global tamanho
     depuracao = depuracaot
     actualTime = 0
     la1 = lambda1
@@ -257,8 +259,13 @@ def inicializaGlobalVariables(lambda1, lambda2, mii1, mii2, depuracaot):
     la2 = lambda2
     mi2 = mii2
     n_amostras = 0
+    
+    tamanho = tamanho_t
+    todosClientes = []
+    tempoOcupado = [0, 0]
 
     eventos = SLinkedList()
+    servidor = None
     clientesPrio = queue.Queue()
     clientesNPrio = queue.Queue()
     plot.clean()

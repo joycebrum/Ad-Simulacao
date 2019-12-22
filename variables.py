@@ -7,3 +7,6 @@ Created on Sat Dec 21 18:49:31 2019
 
 BAIXA = 1
 ALTA = 0
+
+CHEGADA = "chegada"
+SAIDA = "saida"

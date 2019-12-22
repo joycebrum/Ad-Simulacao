@@ -17,26 +17,25 @@ def executaCenario2FilaUnica():
     for cenario in cenarios:
         inicializaGlobalVariables(cenario[0], cenario[1], 
                                   cenario[2], cenario[3], 
-                                  False)
+                                  False, tamanho)
         la = cenario[0] + cenario[1]
         mi = cenario[2] + cenario[3]
-        filaUnica(la, mi, tamanho)
+        filaUnica(la, mi)
 
 def executaCenario2FilaPreempcao():
     cenarios = cenarios2()
     for cenario in cenarios:
         inicializaGlobalVariables(cenario[0], cenario[1], 
                                   cenario[2], cenario[3], 
-                                  False)
+                                  False, tamanho)
         filaDuplaComPreempcao(cenario[0], cenario[1], 
-                              cenario[2], cenario[3], 
-                              tamanho)
+                              cenario[2], cenario[3])
 
 
 def main():
     executaCenario2FilaPreempcao()
-    #filaDuplaComPreempcao(la1, la2, mi1, mi2, tamanho)
-    #filaDuplaSemPreempcao(la1, la2, mi1, mi2, tamanho)
+    #filaDuplaComPreempcao(la1, la2, mi1, mi2)
+    #filaDuplaSemPreempcao(la1, la2, mi1, mi2)
 
         
 

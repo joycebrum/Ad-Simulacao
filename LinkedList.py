@@ -1,3 +1,5 @@
+import variables as v
+
 
 class Node:
     def __init__(self, dataval=None):
@@ -48,10 +50,26 @@ class SLinkedList:
         while atual != None:
             if atual.dataval.time >= exitTime:
                 return None
-            if atual.dataval.event == "chegada" and atual.dataval.priority < priority:
+            if atual.dataval.event == v.CHEGADA and atual.dataval.priority < priority:
                 return atual.dataval
             atual=atual.nextval
         return None
     
     def empty(self):
         return self.headval == None
+    
+    def remove(self, anterior, no):
+        if anterior == None:
+            self.headval = no.nextval
+        else:
+            anterior.nextval = no.nextval
+    
+    def removeIfExistExitEvent(self):
+        anterior = None
+        atual = self.headval
+        while atual != None:
+            if atual.dataval.event == v.SAIDA:
+                self.remove(anterior,  atual)
+                break
+            anterior = atual
+            atual = atual.nextval
