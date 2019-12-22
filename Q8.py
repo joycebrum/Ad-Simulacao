@@ -8,7 +8,7 @@ tamanho = 100
 def cenarios2():
     la = 0.05
     cenarios = []
-    for i in range (0, 11):
+    for i in range (0, 12):
        cenarios.append([round(la + la*i, 2), 0.2, 1, 0.5])
     return cenarios
 
@@ -24,13 +24,21 @@ def executaCenario2FilaUnica():
 
 def executaCenario2FilaPreempcao():
     cenarios = cenarios2()
-    cenarios = [[0.55, 0.2, 1, 0.5]]
-    tamanho = 500
+    #cenarios = [[0.55, 0.2, 1, 0.5]]
     for cenario in cenarios:
         inicializaGlobalVariables(cenario[0], cenario[1], 
                                   cenario[2], cenario[3], 
                                   False, tamanho)
         filaDuplaComPreempcao(cenario[0], cenario[1], 
+                              cenario[2], cenario[3])
+
+def executaCenario2FilaSemPreempcao():
+    cenarios = cenarios2()
+    for cenario in cenarios:
+        inicializaGlobalVariables(cenario[0], cenario[1], 
+                                  cenario[2], cenario[3], 
+                                  False, tamanho)
+        filaDuplaSemPreempcao(cenario[0], cenario[1], 
                               cenario[2], cenario[3])
 
 

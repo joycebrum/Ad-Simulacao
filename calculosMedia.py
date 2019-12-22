@@ -8,6 +8,8 @@ import plot
 import numpy as np
 from variables import ALTA
 from variables import BAIXA
+import intervaloDeConfianca as ic
+
 
 la1 = 0
 la2 = 0
@@ -54,6 +56,7 @@ def Ro_Analitico(classe):
         return la1 / mi1
 
 def Ro_Geral(comClasse):
+    print("a", la1, mi1, la2, mi2)
     if comClasse:
         return la1/mi1 + la2/mi2
     else:
@@ -80,6 +83,7 @@ def getUAnalitico_NPreemptive():
     p2 = Ro_Analitico(BAIXA)
     p = Ro_Geral(True)
     W1_Analitico = pXr/(1-p1)
+    print("p = ", p)
     W2_Analitico = (p1*W1_Analitico + pXr)/(1-p)
     return p1*W1_Analitico + p2*W2_Analitico + pXr
 
@@ -95,6 +99,11 @@ def getUAnalitico_Unica():
     p =  Ro_Geral(False)
     W = p/(mi2 * (1-p))
     return p*W + pXr
+
+def getMediaAmostralFila():
+    Nq1 = ic.mediaAmostral(plot.Espera_Y_Classe[ALTA])
+    Nq2 = ic.mediaAmostral(plot.Espera_Y_Classe[BAIXA])
+    return [round(Nq1,3), round(Nq2,3)]
 
 def printTabelaFilaClasse(actualTime, totalClientes, la1t, la2t, mi1t, mi2t, preemptive, isFilaUnica):
     global la1, la2, mi1, mi2, pXr
@@ -119,6 +128,13 @@ def printTabelaFilaClasse(actualTime, totalClientes, la1t, la2t, mi1t, mi2t, pre
                       round(Nq(actualTime, BAIXA), 2),
                       round(U, 2)
                     ]])
+    printTabela(teams_list, data)
+    
+    printMediaAmostralFila()
+
+def printMediaAmostralFila():
+    teams_list = ["Média Nq1", "Média Nq2"]
+    data = np.array([getMediaAmostralFila()])
     printTabela(teams_list, data)
 
 def printTabela(teams_list, data):
