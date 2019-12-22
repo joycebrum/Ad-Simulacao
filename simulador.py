@@ -214,7 +214,6 @@ def loopPrincipal(tamanho):
     
     print("\n Tabela para os valores de lamda1, lamda2, mi1, mi2 = ", la1, la2, mi1, mi2)
     calculosMedia.printTabelaFilaClasse(actualTime, totalClientes, la1, la2, mi1,mi2, preemptive, isFilaUnica)
-    plot.plotClientesSistema()
 
 def filaUnica(la1, mi1):
     global actualTime, previousTime, preemptive, isFilaUnica

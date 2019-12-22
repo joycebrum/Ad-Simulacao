@@ -2,15 +2,10 @@ from simulador import filaDuplaComPreempcao
 from simulador import filaDuplaSemPreempcao
 from simulador import filaUnica
 from simulador import inicializaGlobalVariables
+from variables import cenarios2
 
 
 tamanho = 100
-def cenarios2():
-    la = 0.05
-    cenarios = []
-    for i in range (0, 12):
-       cenarios.append([round(la + la*i, 2), 0.2, 1, 0.5])
-    return cenarios
 
 def executaCenario2FilaUnica():
     cenarios = cenarios2()

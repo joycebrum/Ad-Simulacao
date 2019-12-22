@@ -131,13 +131,11 @@ def getArea(X, Y):
 
 
 def plotClientesSistema():
-    plt.step(Clientes_X, Clientes_Y)
-    plt.axis([0, Clientes_X_Max, 0, Clientes_Y_Max])
-  
-def plotData(xdados, y):
-    plt.plot(xdados, y, 'ro')
-    plt.axis([0, 450, 0, 100])
-    plt.show()
+    plot(Clientes_X, Clientes_Y, Clientes_X_Max, Clientes_Y_Max)
+    
+def plot(x, y, x_max, y_max):
+    plt.step(x, y)
+    plt.axis([0, x_max, 0, y_max])
     
     
 

@@ -10,3 +10,10 @@ ALTA = 0
 
 CHEGADA = "chegada"
 SAIDA = "saida"
+
+def cenarios2():
+    la = 0.05
+    cenarios = []
+    for i in range (0, 12):
+       cenarios.append([round(la + la*i, 2), 0.2, 1, 0.5])
+    return cenarios
