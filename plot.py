@@ -37,7 +37,6 @@ Trabalho_Residual_X_Classe_Max = {0: 0, 1: 0}
 Trabalho_Residual_Y_Classe = {0: [0], 1: [0]}
 Trabalho_Residual_Y_Classe_Max = {0: 0, 1: 0}
 
-
 def getTotalPessoasNoSistema(fila1, fila2, servidor):
     if servidor != None:
         return len(fila1) + len(fila2) +1
@@ -140,3 +139,42 @@ def plotData(xdados, y):
     plt.axis([0, 450, 0, 100])
     plt.show()
     
+    
+
+def clean():
+    global Clientes_X, Clientes_X_Max, Clientes_Y, Clientes_Y_Max, Clientes_X_Classe
+    global Clientes_X_Classe_Max, Clientes_Y_Classe, Clientes_Y_Classe_Max, Espera_X
+    global Espera_X_Max, Espera_Y, Espera_Y_Max, Espera_X_Classe, Espera_X_Classe_Max
+    global Espera_Y_Classe, Espera_Y_Classe_Max, Trabalho_Residual_X, Trabalho_Residual_X_Max
+    global Trabalho_Residual_Y, Trabalho_Residual_Y_Max, Trabalho_Residual_X_Classe
+    global Trabalho_Residual_X_Classe_Max, Trabalho_Residual_Y_Classe, Trabalho_Residual_Y_Classe_Max
+        
+    Clientes_X = [0]
+    Clientes_X_Max = 0
+    Clientes_Y = [0]
+    Clientes_Y_Max = 0
+    
+    Clientes_X_Classe = {0: [0], 1: [0]}
+    Clientes_X_Classe_Max = {0: 0, 1: 0}
+    Clientes_Y_Classe = {0: [0], 1: [0]}
+    Clientes_Y_Classe_Max = {0: 0, 1: 0}
+    
+    Espera_X = [0]
+    Espera_X_Max = 0
+    Espera_Y = [0]
+    Espera_Y_Max = 0
+    
+    Espera_X_Classe = {0: [0], 1: [0]}
+    Espera_X_Classe_Max = {0: 0, 1: 0}
+    Espera_Y_Classe = {0: [0], 1: [0]}
+    Espera_Y_Classe_Max = {0: 0, 1: 0}
+    
+    Trabalho_Residual_X = [0]
+    Trabalho_Residual_X_Max = 0
+    Trabalho_Residual_Y = [0]
+    Trabalho_Residual_Y_Max = 0
+    
+    Trabalho_Residual_X_Classe = {0: [0], 1: [0]}
+    Trabalho_Residual_X_Classe_Max = {0: 0, 1: 0}
+    Trabalho_Residual_Y_Classe = {0: [0], 1: [0]}
+    Trabalho_Residual_Y_Classe_Max = {0: 0, 1: 0}

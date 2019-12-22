@@ -51,14 +51,13 @@ def Ro_Analitico(classe):
     if classe == BAIXA:
         return la2 / mi2
     else:
-        print(la1, mi1)
         return la1 / mi1
 
 def Ro_Geral(comClasse):
     if comClasse:
         return la1/mi1 + la2/mi2
     else:
-        return la1/mi1
+        return la2/mi2
 
 
 def printTabelaFilaUnica(actualTime, totalClientes, ro):
@@ -92,21 +91,29 @@ def getUAnalitico_Preemptive():
     W2_Analitico = (p1*W1_Analitico + pXr + p1/mi2)/(1-p)
     return p1*W1_Analitico + p2*W2_Analitico + pXr
 
-def printTabelaFilaClasse(actualTime, totalClientes, la1t, la2t, mi1t, mi2t, preemptive):
+def getUAnalitico_Unica():
+    p =  Ro_Geral(False)
+    W = p/(mi2 * (1-p))
+    return p*W + pXr
+
+def printTabelaFilaClasse(actualTime, totalClientes, la1t, la2t, mi1t, mi2t, preemptive, isFilaUnica):
     global la1, la2, mi1, mi2, pXr
     la1 = la1t
     la2 = la2t
     mi1 = mi1t
     mi2 = mi2t
     pXr = Ro_Analitico(ALTA)*1/mi1 + Ro_Analitico(BAIXA)*1/mi2
-    
-    if preemptive:
+    if isFilaUnica:
+        p =  Ro_Geral(not isFilaUnica)
+        pXr = p*1/mi2
+        U_Analitico = getUAnalitico_Unica()
+    elif preemptive:
         U_Analitico = getUAnalitico_Preemptive()
     else:
         U_Analitico = getUAnalitico_NPreemptive()
     U = Nq(actualTime, ALTA)*1/mi1 + Nq(actualTime, BAIXA)*1/mi2 + pXr
     teams_list = ["E[U](2)", "E[U](3)", "E[Nq1]", "E[Nq2]", "E[U](4)"]
-    data = np.array([[round(pXr/(1 - Ro_Geral(True)), 2),
+    data = np.array([[round(pXr/(1 - Ro_Geral(not isFilaUnica)), 2),
                       round(U_Analitico, 2),
                       round(Nq(actualTime, ALTA), 2), 
                       round(Nq(actualTime, BAIXA), 2),
