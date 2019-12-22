@@ -137,8 +137,15 @@ def plot(x, y, x_max, y_max):
     plt.step(x, y)
     plt.axis([0, x_max, 0, y_max])
     
+def plotData(xdados, y):
+    plt.plot(xdados, y, 'ro')
+    plt.axis([0, 450, 0, 100])
+    plt.show()
     
-
+def plotFunction(x, y):
+    plt.plot(x, y)
+    plt.axis([0, 450, 0, 100])
+    
 def clean():
     global Clientes_X, Clientes_X_Max, Clientes_Y, Clientes_Y_Max, Clientes_X_Classe
     global Clientes_X_Classe_Max, Clientes_Y_Classe, Clientes_Y_Classe_Max, Espera_X
