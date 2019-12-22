@@ -6,13 +6,15 @@ import calculosMedia
 import queue
 import random
 import plot
-from variables import ALTA
+
 from variables import BAIXA
+from variables import ALTA
 
 la1 = 0
 mi1 = 0
 la2 = 0
 mi2 = 0
+
 
 todosClientes = []
 Evento = namedtuple("Evento", "time event priority")
@@ -59,11 +61,14 @@ def nextArrival(la):
 def nextService(mi):
     return exponential(1/mi)
 
-def chegada(arrivedEvent, la):
+def chegada(arrivedEvent):
     global actualTime
     global globalId, n_amostras
     n_amostras += 1
-    updateNextArrival(arrivedEvent.priority, la)
+    if(random.random() <= la1/(la1+la2)):
+        updateNextArrival(ALTA, la1)
+    else:
+        updateNextArrival(BAIXA, la2)
     clientData = ClientData(arrivedEvent.priority, actualTime, -1)
     cliente = Client(arrivedEvent.priority, globalId, clientData)
     printCliente(cliente, "chegou")
@@ -143,7 +148,10 @@ def serverClient(nextClient):
     
     tempoExecucao = nextClient.clientData.getTimeRemaining()
     if tempoExecucao < 0:
-        tempoExecucao = nextService(mi1)
+        if nextClient.priority == ALTA:
+            tempoExecucao = nextService(mi1)
+        else:
+            tempoExecucao = nextService(mi2)
     nextClient.clientData.service = tempoExecucao
     servidor = nextClient
     updateNextExit(tempoExecucao, nextClient)
@@ -185,11 +193,15 @@ def loopPrincipal(tamanho):
             print("---------------------Instante: ", actualTime, "----------------------------\n")
             updateTimeVariables()
             if (eventoAtual.event == "chegada"):
-                chegada(eventoAtual, la1)
+                chegada(eventoAtual)
             else:            
                 saida(eventoAtual, mi1)
             printDadosSistema()
         plot.updateGrafos(clientesNPrio.queue, clientesPrio.queue, servidor, actualTime)
+    
+    print(" ---------- Medias")
+    calculosMedia.printTabelaFilaClasse(actualTime, totalClientes, la1, la2, mi1,mi2, preemptive)
+    plot.plotClientesSistema()
 
 def filaUnica(la1, mi1, tamanho):
     global actualTime, previousTime, preemptive, isFilaUnica
@@ -198,8 +210,6 @@ def filaUnica(la1, mi1, tamanho):
     preemptive = False
     updateNextArrival(BAIXA, la1)
     loopPrincipal(tamanho)
-    print(" ---------- Medias")
-    calculosMedia.printTabelaFilaUnica(actualTime, totalClientes, getRo()[BAIXA])
 
 
 def filaDuplaComPreempcao(la1, la2, mi1, mi2, tamanho):
@@ -212,9 +222,6 @@ def filaDuplaComPreempcao(la1, la2, mi1, mi2, tamanho):
     else:
         updateNextArrival(BAIXA, la2)
     loopPrincipal(tamanho)
-    print(" ---------- Medias")
-    calculosMedia.printTabelaFilaClasse(actualTime, totalClientes, getRo())
-    plot.plotClientesSistema()
 
 def filaDuplaSemPreempcao(la1, la2, mi1, mi2, tamanho):
     global actualTime, previousTime, preemptive, isFilaUnica
@@ -226,9 +233,6 @@ def filaDuplaSemPreempcao(la1, la2, mi1, mi2, tamanho):
     else:
         updateNextArrival(BAIXA, la2)
     loopPrincipal(tamanho)
-    print(" ---------- Medias")
-    calculosMedia.printTabelaFilaClasse(actualTime, totalClientes, getRo())
-    plot.plotClientesSistema()
     
 
 def inicializaGlobalVariables(lambda1, lambda2, mii1, mii2):
@@ -246,8 +250,6 @@ def inicializaGlobalVariables(lambda1, lambda2, mii1, mii2):
     clientesNPrio = queue.Queue()
 
 def main():
-    global la
-    global mi
     la1 = 0.05
     mi1 = 1
     la2 = 0.2
@@ -258,6 +260,7 @@ def main():
     inicializaGlobalVariables(la1, la2, mi1, mi2)
     #filaUnica(la1, mi1, tamanho)
     filaDuplaComPreempcao(la1, la2, mi1, mi2, tamanho)
+    #filaDuplaSemPreempcao(la1, la2, mi1, mi2, tamanho)
 
 def printCliente(cliente, evento):
     print("o cara de id: ",  cliente.id, evento)
