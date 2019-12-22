@@ -250,7 +250,7 @@ def filaDuplaSemPreempcao(la1, la2, mi1, mi2):
 
 def inicializaGlobalVariables(lambda1, lambda2, mii1, mii2, depuracaot, tamanho_t):
     global actualTime, la1, la2, mi1, mi2, eventos, clientesPrio, clientesNPrio
-    global n_amostras, depuracao, todosClientes, tempoOcupado, servidor
+    global n_amostras, depuracao, todosClientes, tempoOcupado, servidor, totalClientes
     global tamanho
     depuracao = depuracaot
     actualTime = 0
@@ -263,6 +263,7 @@ def inicializaGlobalVariables(lambda1, lambda2, mii1, mii2, depuracaot, tamanho_
     tamanho = tamanho_t
     todosClientes = []
     tempoOcupado = [0, 0]
+    totalClientes = [0, 0]
 
     eventos = SLinkedList()
     servidor = None

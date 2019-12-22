@@ -24,6 +24,8 @@ def executaCenario2FilaUnica():
 
 def executaCenario2FilaPreempcao():
     cenarios = cenarios2()
+    cenarios = [[0.55, 0.2, 1, 0.5]]
+    tamanho = 500
     for cenario in cenarios:
         inicializaGlobalVariables(cenario[0], cenario[1], 
                                   cenario[2], cenario[3], 
