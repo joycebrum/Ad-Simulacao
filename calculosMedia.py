@@ -163,10 +163,8 @@ def getUAnalitico_Unica(la1, la2, mi1, mi2):
     p2 = la2/mi2
     if p1 + p2 == 1:
         return 99999
-    pXr = p1/mi1 + p2/mi2
-    W = pXr/(1-p1-p2)
-    print("nq=", NqAnalitico(la1, la2, mi1, mi2, True), "w=",W)
-    return NqAnalitico(la1, la2, mi1, mi2, True)/(mi1+mi2) + pXr
+    pXr = p1/mi1 + p2/mi2s
+    return NqAnaliticoExp(la1, la2, mi1, mi2, True)/(mi1+mi2) + pXr
 
 def getMediaAmostralFila():
     Nq1 = ic.mediaAmostral(plot.Espera_Y_Classe[ALTA])
