@@ -177,7 +177,6 @@ def plotData(xdados, y, x_max, y_max):
     plt.show()
     
 def plotFunction(x, y, x_max, y_max):
-    print("plotou")
     plt.plot(x, y)
     plt.axis([0, x_max, 0, y_max])
     

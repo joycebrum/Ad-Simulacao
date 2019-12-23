@@ -244,7 +244,7 @@ def filaUnica():
     isFilaUnica = True
     preemptive = False
     loopPrincipal(tamanho)
-    return actualTime
+    return [actualTime, totalClientes]
 
 def filaDuplaComPreempcao():
     global actualTime, previousTime, preemptive, isFilaUnica
@@ -252,6 +252,7 @@ def filaDuplaComPreempcao():
     isFilaUnica = False
     preemptive = True
     loopPrincipal(tamanho)
+    return [actualTime, totalClientes]
 
 def filaDuplaSemPreempcao():
     global actualTime, previousTime, preemptive, isFilaUnica
@@ -259,7 +260,7 @@ def filaDuplaSemPreempcao():
     isFilaUnica = False
     preemptive = False
     loopPrincipal(tamanho)
-    return actualTime
+    return [actualTime,totalClientes]
 
 def inicializaGlobalVariables(lambda1, lambda2, mii1, mii2, depuracaot, tamanho_t, tipo):
     global actualTime, la1, la2, mi1, mi2, eventos, clientesPrio, clientesNPrio

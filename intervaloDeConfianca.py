@@ -31,10 +31,8 @@ def calculaIntervaloDeConfianca(distribuicao):
     desvio = math.sqrt(variancia)
     
     # Intervalo de Confiança
-    print("tc = ", tc, " desvio = ", desvio, "raiz(n) = ", math.sqrt(n))
     IC = tc * (desvio / math.sqrt(n))
 
-    print("retornando IC = ", IC)
     return IC
 
 #calculaIntervaloDeConfianca([1,2,5,6,7,8,5,3,2,4,5,7,8])

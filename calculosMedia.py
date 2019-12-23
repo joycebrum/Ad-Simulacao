@@ -102,6 +102,23 @@ def NqAnaliticoUni(la1,la2, mi1, mi2, isFilaUnica):
 def W(totalClientes, classe):
     return tempoMedio(totalClientes[classe],plot.Espera_X_Classe[classe], plot.Espera_Y_Classe[classe])
 
+def W_filaUnica(totalClientes):
+    return tempoMedio(totalClientes[0] + totalClientes[1],plot.Espera_X, plot.Espera_Y)
+
+def tempoEspera_FilaUnica(totalClientes, actualTime):
+    w = []
+    tot = totalClientes[0] + totalClientes[1]
+    for nq in plot.Espera_Y:
+        w.append((actualTime/tot) * nq)
+    return w
+
+def tempoEspera(totalClientes, actualTime, classe):
+    w = []
+    tot = totalClientes[0] + totalClientes[1]
+    for nq in plot.Espera_Y_Classe[classe]:
+        w.append((actualTime/tot) * nq)
+    return w
+
 def N(actualTime, classe):
     return numeroMedio(actualTime,plot.Clientes_X_Classe[classe], plot.Clientes_Y_Classe[classe]) 
 
