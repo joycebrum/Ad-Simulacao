@@ -39,6 +39,8 @@ def Xr(totalClientes, classe):
 
 def Nq(actualTime, classe):
     return numeroMedio(actualTime,plot.Espera_X_Classe[classe], plot.Espera_Y_Classe[classe])
+def Nq_filaUnica(actualTime):
+    return numeroMedio(actualTime,plot.Espera_X, plot.Espera_Y)
 
 def NqAnalitico(la, mi):
     return ( ( pow(la,2)/pow(mi,2) ) / ( 1-(la/mi) ) )

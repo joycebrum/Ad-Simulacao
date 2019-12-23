@@ -97,7 +97,7 @@ def updateNextArrival(priority, la):
     
 def updateNextExit(tempoExecucao, nextClient):
     interruption = eventos.getInterruption(actualTime + tempoExecucao, nextClient.priority)
-    if interruption == None or not preemptive: #so adiciona evento de saida se nao for ser interrompido
+    if isFilaUnica or interruption == None or not preemptive: #so adiciona evento de saida se nao for ser interrompido
         return eventos.add(Evento(actualTime + tempoExecucao, "saida", nextClient.priority))
 
 def saida(exitEvent, mi):
@@ -105,16 +105,12 @@ def saida(exitEvent, mi):
     if depuracao:
         printCliente(servidor, "saiu")
     
-    #fazendo conta do tempo medio do cara que ta saindo
-    if servidor.id in queueTime:
-        queueTime[servidor.id] += getExecutedTime()
-    else:
-        queueTime[servidor.id] = getExecutedTime()
-    #terminando conta do tempo medio
     if isFilaUnica:
-        if clientesFilaUnica.empty():
+        if not clientesFilaUnica.empty():
             nextClient = clientesFilaUnica.get()
             serverClient(nextClient)
+        else:
+            servidor = None
     elif not clientesPrio.empty() :
         nextClient = clientesPrio.get()
         serverClient(nextClient)
@@ -155,8 +151,7 @@ def interrupt(cliente):
     serverClient(cliente)
     
 def serverClient(nextClient):
-    global actualTime
-    global servidor
+    global actualTime, servidor
     
     tempoExecucao = nextClient.clientData.getTimeRemaining()
     if tempoExecucao < 0:
@@ -215,8 +210,13 @@ def loopPrincipal(tamanho):
             saida(eventoAtual, mi1)
         if depuracao :
             printDadosSistema()
-        plot.updateGrafos(clientesNPrio.queue, clientesPrio.queue, servidor, actualTime)
+        if isFilaUnica:
+            plot.updateGrafosFilaUnica(clientesFilaUnica.queue, servidor, actualTime)
+        else:
+            plot.updateGrafos(clientesNPrio.queue, clientesPrio.queue, servidor, actualTime)
     
+
+def imprimeTabela():
     print("\n Tabela para os valores de lamda1, lamda2, mi1, mi2 = ", la1, la2, mi1, mi2)
     calculosMedia.printTabelaFilaClasse(actualTime, totalClientes, la1, la2, mi1,mi2, preemptive, isFilaUnica)
 
@@ -246,9 +246,10 @@ def filaDuplaSemPreempcao():
 def inicializaGlobalVariables(lambda1, lambda2, mii1, mii2, depuracaot, tamanho_t):
     global actualTime, la1, la2, mi1, mi2, eventos, clientesPrio, clientesNPrio
     global n_amostras, depuracao, todosClientes, tempoOcupado, servidor, totalClientes
-    global tamanho
+    global tamanho, clientesFilaUnica, globalId
     depuracao = depuracaot
     actualTime = 0
+    globalId = 0
     la1 = lambda1
     mi1 = mii1
     la2 = lambda2
@@ -264,6 +265,7 @@ def inicializaGlobalVariables(lambda1, lambda2, mii1, mii2, depuracaot, tamanho_
     servidor = None
     clientesPrio = queue.Queue()
     clientesNPrio = queue.Queue()
+    clientesFilaUnica = queue.Queue()
     plot.clean()
 
 def printCliente(cliente, evento):
@@ -271,10 +273,14 @@ def printCliente(cliente, evento):
     cliente.clientData.console()
     print("\n")
 def printDadosSistema():
-    print('Fila Alta Prioridade: ', end = '')
-    printDadosClientFila(clientesPrio)
-    print('Fila Baixa Prioridade: ', end = '')
-    printDadosClientFila(clientesNPrio)
+    if isFilaUnica:
+        print("Fila: ", end = '')
+        printDadosClientFila(clientesFilaUnica)
+    else:
+        print('Fila Alta Prioridade: ', end = '')
+        printDadosClientFila(clientesPrio)
+        print('Fila Baixa Prioridade: ', end = '')
+        printDadosClientFila(clientesNPrio)
     if servidor != None:
         print('Servidor: {C:', servidor.clientData.arrivalTime, ", Xr:", servidor.clientData.getTimeRemaining(), "}\n")
     else: 

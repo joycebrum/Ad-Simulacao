@@ -33,9 +33,10 @@ def executaCenarioExp(cenarios, isFilaUnica):
         mi = cenario[2] + cenario[3]
         if isFilaUnica:
             tempo = filaUnica()
+            pessoas = cm.Nq_filaUnica(tempo)
         else:
             tempo = filaDuplaSemPreempcao()
-        pessoas = cm.Nq(tempo, variables.ALTA) + cm.Nq(tempo, variables.BAIXA)
+            pessoas = cm.Nq(tempo, variables.ALTA) + cm.Nq(tempo, variables.BAIXA)
         if maxPessoas < pessoas:
             maxPessoas = pessoas
         
@@ -64,8 +65,8 @@ def executaCenarioExp(cenarios, isFilaUnica):
 
 
 def main():
-    #executaCenario1()
-    executaCenario2()
+    executaCenario1()
+    #executaCenario2()
     #filaDuplaComPreempcao(la1, la2, mi1, mi2)
     #filaDuplaSemPreempcao(la1, la2, mi1, mi2)
 

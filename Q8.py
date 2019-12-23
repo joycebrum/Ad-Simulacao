@@ -2,6 +2,7 @@ from simulador import filaDuplaComPreempcao
 from simulador import filaDuplaSemPreempcao
 from simulador import filaUnica
 from simulador import inicializaGlobalVariables
+from simulador import imprimeTabela
 from variables import cenarios2
 
 
@@ -23,6 +24,7 @@ def executaCenario2FilaPreempcao():
                                   cenario[2], cenario[3], 
                                   False, tamanho)
         filaDuplaComPreempcao()
+        imprimeTabela()
 
 def executaCenario2FilaSemPreempcao():
     cenarios = cenarios2()
@@ -31,6 +33,8 @@ def executaCenario2FilaSemPreempcao():
                                   cenario[2], cenario[3], 
                                   False, tamanho)
         filaDuplaSemPreempcao()
+        imprimeTabela()
+        
 
 
 def main():

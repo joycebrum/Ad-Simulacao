@@ -50,6 +50,40 @@ def getTotalPessoasNoSistemaPorClasse(fila, servidor, priority):
         return len(fila)
     else:
         return 0
+def updateGrafoEsperaFilaUnica(fila, time):
+    global Espera_X, Espera_Y, Espera_X_Max, Espera_Y_Max
+    clientesNaFila = len(fila)
+    Espera_X.append(time)
+    Espera_X_Max = time
+    Espera_Y.append(clientesNaFila)
+    if clientesNaFila > Clientes_Y_Max:
+        Espera_Y_Max = clientesNaFila
+
+def updateGrafoTrabalhoResidual(servidor,time):
+    global Trabalho_Residual_X, Trabalho_Residual_Y
+    global Trabalho_Residual_X_Max, Trabalho_Residual_Y_Max
+    Trabalho_Residual_X.append(time)
+    Trabalho_Residual_X_Max = time
+    if servidor != None:
+        Trabalho_Residual_Y.append(servidor.clientData.getTimeRemaining())
+        if servidor.clientData.getTimeRemaining() > Trabalho_Residual_Y_Max:
+            Trabalho_Residual_Y_Max = servidor.clientData.getTimeRemaining()
+    else:
+        Trabalho_Residual_Y.append(0)
+
+def updateGrafosFilaUnica(fila, servidor, time):
+    global Clientes_X, Clientes_Y, Clientes_X_Max, Clientes_Y_Max
+    Clientes_X.append(time)
+    Clientes_X_Max = time
+    if servidor != None:
+        numeroPessoas = len(fila)
+    else:
+        numeroPessoas = len(fila)+ 1
+    Clientes_Y.append(numeroPessoas)
+    if numeroPessoas > Clientes_Y_Max:
+        Clientes_Y_Max = numeroPessoas
+    updateGrafoEsperaFilaUnica(fila, time)
+    updateGrafoTrabalhoResidual(servidor,time)
     
 def updateGrafos(filaNP, filaP, servidor, time):
     global Clientes_X, Clientes_Y, Clientes_X_Max, Clientes_Y_Max
