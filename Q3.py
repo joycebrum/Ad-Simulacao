@@ -8,18 +8,37 @@ from simulador import filaDuplaSemPreempcao
 from simulador import filaUnica
 from simulador import inicializaGlobalVariables
 from plot import plotFunction
+from plot import plotData
 import variables as variables
 import calculosMedia as cm
 
 tamanho = 100
 
-def executaCenario1():
-    executaCenarioExp(variables.cenarios1(), True)
+def Q3():
+    #executaCenario1(True)
+    #executaCenario2(True)
+    #executaCenario3(True)
+    executaCenario4(True)
 
-def executaCenario2():
-    executaCenarioExp(variables.cenarios2(), True)
+def Q4():
+    #executaCenario1(False)
+    #executaCenario2(False)
+    executaCenario3(False)
 
-def executaCenarioExp(cenarios, isFilaUnica):
+
+def executaCenario1(isQ3):
+    executaCenario(variables.cenarios1(), isQ3, 0.9, 'e')
+
+def executaCenario2(isQ3):
+    executaCenario(variables.cenarios2(), isQ3, 0.6, 'e')
+
+def executaCenario3(isQ3):
+    executaCenario(variables.cenarios3(), isQ3, 0.6, 'd')
+
+def executaCenario4(isQ3):
+    executaCenario(variables.cenarios4(), isQ3, 0.1, 'u' )
+
+def executaCenario(cenarios, isFilaUnica, maxLambda, tipoDeFila):
     vetorDePlotagemX = []
     vetorDePlotagemY = []
     vetorDePlotagemX2 = []
@@ -28,7 +47,7 @@ def executaCenarioExp(cenarios, isFilaUnica):
     for cenario in cenarios:
         inicializaGlobalVariables(cenario[0], cenario[1], 
                                   cenario[2], cenario[3], 
-                                  False, tamanho)
+                                  False, tamanho, tipoDeFila)
         la1 = cenario[0]
         la2 = cenario[1]
         mi1 = cenario[2]
@@ -52,25 +71,33 @@ def executaCenarioExp(cenarios, isFilaUnica):
         vetorDePlotagemY.append(pessoas)
         vetorDePlotagemY.append(0)
         
-        pessoas = cm.NqAnalitico(la1, la2, mi1, mi2, isFilaUnica)
-        if maxPessoas < pessoas:
-            maxPessoas = pessoas
-            
-        vetorDePlotagemX2.append(cenario[0])
-        vetorDePlotagemY2.append(pessoas)
+        if tipoDeFila == 'e':
+            pessoasSeparadoPorClasse = cm.NqAnaliticoExp(la1, la2, mi1, mi2, isFilaUnica)
+        elif tipoDeFila == 'd':
+            pessoasSeparadoPorClasse = cm.NqAnaliticoDeter(la1, la2, mi1, mi2, isFilaUnica)
+        elif tipoDeFila == 'u':
+            pessoasSeparadoPorClasse = cm.NqAnaliticoUni(la1, la2, mi1, mi2, isFilaUnica)
+        pessoas = pessoasSeparadoPorClasse[0] + pessoasSeparadoPorClasse[1]
+        if pessoas >= 0:
+            if maxPessoas < pessoas:
+                maxPessoas = pessoas
+                
+            vetorDePlotagemX2.append(cenario[0])
+            vetorDePlotagemY2.append(pessoas)
         
         
-        
-    plotFunction(vetorDePlotagemX, vetorDePlotagemY, 0.95, maxPessoas+0.1)
-    plotFunction(vetorDePlotagemX2, vetorDePlotagemY2, 0.95, maxPessoas+0.1)
+    print("vetor De Plotagem Y = ", vetorDePlotagemY)
+    plotFunction(vetorDePlotagemX, vetorDePlotagemY, maxLambda + 0.05 , maxPessoas+0.5)
+    if tipoDeFila == 'u':
+        plotData(vetorDePlotagemX2, vetorDePlotagemY2, maxLambda + 0.05,  maxPessoas+0.5)    
+    else:
+        plotFunction(vetorDePlotagemX2, vetorDePlotagemY2, maxLambda + 0.05,  maxPessoas+0.5)
     
 
 
 def main():
-    executaCenario1()
-    #executaCenario2()
-    #filaDuplaComPreempcao(la1, la2, mi1, mi2)
-    #filaDuplaSemPreempcao(la1, la2, mi1, mi2)
+    Q3()
+    #Q4()
 
         
 

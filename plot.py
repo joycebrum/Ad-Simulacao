@@ -171,9 +171,9 @@ def plot(x, y, x_max, y_max):
     plt.step(x, y)
     plt.axis([0, x_max, 0, y_max])
     
-def plotData(xdados, y):
+def plotData(xdados, y, x_max, y_max):
     plt.plot(xdados, y, 'ro')
-    plt.axis([0, 450, 0, 100])
+    plt.axis([0, x_max, 0, y_max])
     plt.show()
     
 def plotFunction(x, y, x_max, y_max):

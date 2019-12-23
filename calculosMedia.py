@@ -43,16 +43,62 @@ def Nq(actualTime, classe):
 def Nq_filaUnica(actualTime):
     return numeroMedio(actualTime,plot.Espera_X, plot.Espera_Y)
 
-def NqAnalitico(la1,la2, mi1, mi2, isFilaUnica):
+def NqAnaliticoExp(la1,la2, mi1, mi2, isFilaUnica):
+    p1 = la1/mi1
+    p2 = la2/mi2
+    ## Questão 3 - cenario 1 e 2 ##
+    if not la1 == 0.6 and la2 == 0.2:
+        if isFilaUnica:
+            w = (p1/mi1+p2/mi2) / (1-p1-p2)
+            nq1 = la1 * w
+            nq2 = la2 * w
+            return [nq1, nq2]
+        ## Questão 4 - cenario 1 e 2 ##
+        else: #sem preempção
+            pXr = p1/mi1 + p2/mi2
+            w1 = pXr/(1-p1)
+            nq1 = la1*w1
+            w2 = (p1*w1 + pXr)/(1-p1-p2)
+            nq2 = la2*w2
+            return [nq1, nq2]
+    else:
+        return [-1,0]
+def NqAnaliticoDeter(la1,la2, mi1, mi2, isFilaUnica):
+    p1 = la1/mi1
+    p2 = la2/mi2
+    ## Questão 3 - cenario 3 ##
+    if not la1 == 0.6 and la2 == 0.2:
+        if isFilaUnica:
+            w = (p1/(2*mi1) + p2/(2*mi2)) / (1-p1-p2)
+            nq1 = la1 * w
+            nq2 = la2 * w
+            return [nq1, nq2]
+        ## Questão 4 - cenario 3 ##
+        else:
+            print("TODO")
+    else:
+        return [-1, 0]
+    
+def NqAnaliticoUni(la1,la2, mi1, mi2, isFilaUnica):
+    a1 = mi1[0]
+    a2 = mi2[0]
+    b1 = mi1[1]
+    b2 = mi2[1]
+    p1 = la1*(a1+b1)/2
+    p2 = la2*(a2+b2)/2
+    ## Questão 3 - cenario 4 ##
     if isFilaUnica:
-        p1 = la1/mi1
-        p2 = la2/mi2
-        w = (p1/mi1+p2/mi2) / (1-p1-p2)
+        w1 = (p1*(pow(a1,2) + a1*b1 + pow(b1,2)))/(3*(a1+b1))
+        w2 = (p2*(pow(a2,2) + a2*b2 + pow(b2,2)))/(3*(a2+b2))
+        w = (w1 + w2)/(1-p1-p2)
         nq1 = la1 * w
         nq2 = la2 * w
-        return nq1 + nq2
-    return ( ( pow(la,2)/pow(mi,2) ) / ( 1-(la/mi) ) )
-
+        return [nq1, nq2]
+     ## Questão 4 - cenario 4 ##
+    else:
+        print("TODO")
+        
+        
 def W(totalClientes, classe):
     return tempoMedio(totalClientes[classe],plot.Espera_X_Classe[classe], plot.Espera_Y_Classe[classe])
 

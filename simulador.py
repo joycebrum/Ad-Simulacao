@@ -47,6 +47,8 @@ Client = namedtuple("Client", "priority id clientData")
 actualTime = 0
 previousTime = -1
 
+tipoDeFila = 'n'
+
 isFilaUnica = True
 preemptive = False
 
@@ -150,16 +152,33 @@ def interrupt(cliente):
         clientesNPrio.put(servidor)
     serverClient(cliente)
     
+def setFirstTime(nextClient):
+    if tipoDeFila == 'e':
+        if nextClient.priority == ALTA:
+            return nextService(mi1)
+        else:
+            return nextService(mi2)
+    elif tipoDeFila == 'd':
+        if nextClient.priority == ALTA:
+            return 1/mi1
+        else:
+            return 1/mi2
+    elif tipoDeFila == 'u':
+        if nextClient.priority == ALTA:
+            dif = mi1[0] - mi1[1]
+            return (random.random() * dif) + mi1[0]
+        else:
+            dif = mi2[0] - mi2[1]
+            return (random.random() * dif) + mi2[0]
+
+    nextClient.clientData.service = tempoExecucao
+    
 def serverClient(nextClient):
     global actualTime, servidor
     
     tempoExecucao = nextClient.clientData.getTimeRemaining()
     if tempoExecucao < 0:
-        if nextClient.priority == ALTA:
-            tempoExecucao = nextService(mi1)
-        else:
-            tempoExecucao = nextService(mi2)
-    nextClient.clientData.service = tempoExecucao
+        tempoExecucao = setFirstTime(nextClient)
     servidor = nextClient
     updateNextExit(tempoExecucao, nextClient)
     
@@ -241,12 +260,12 @@ def filaDuplaSemPreempcao():
     isFilaUnica = False
     preemptive = False
     loopPrincipal(tamanho)
-    
+    return actualTime
 
-def inicializaGlobalVariables(lambda1, lambda2, mii1, mii2, depuracaot, tamanho_t):
+def inicializaGlobalVariables(lambda1, lambda2, mii1, mii2, depuracaot, tamanho_t, tipo):
     global actualTime, la1, la2, mi1, mi2, eventos, clientesPrio, clientesNPrio
     global n_amostras, depuracao, todosClientes, tempoOcupado, servidor, totalClientes
-    global tamanho, clientesFilaUnica, globalId
+    global tamanho, clientesFilaUnica, globalId, tipoDeFila
     depuracao = depuracaot
     actualTime = 0
     globalId = 0
@@ -255,6 +274,7 @@ def inicializaGlobalVariables(lambda1, lambda2, mii1, mii2, depuracaot, tamanho_
     la2 = lambda2
     mi2 = mii2
     n_amostras = 0
+    tipoDeFila = tipo
     
     tamanho = tamanho_t
     todosClientes = []

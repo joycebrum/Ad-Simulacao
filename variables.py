@@ -22,7 +22,7 @@ def cenarios3():
     return geraLambda1(0.2, 1, 0.5, False)
 
 def cenarios4():
-    return geraLambda1(0.05, 1, 0.5, False)
+    return [[0.08, 0.05, [5, 15], [1,3]]]
 ## ver aqui em cima ##
 
 def geraLambda1(lambda2, mi1, mi2, is1):
