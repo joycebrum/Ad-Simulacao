@@ -47,7 +47,7 @@ def NqAnaliticoExp(la1,la2, mi1, mi2, isFilaUnica):
     p1 = la1/mi1
     p2 = la2/mi2
     ## Questão 3 - cenario 1 e 2 ##
-    if not la1 == 0.6 and la2 == 0.2:
+    if not (la1 == 0.6 and la2 == 0.2):
         if isFilaUnica:
             w = (p1/mi1+p2/mi2) / (1-p1-p2)
             nq1 = la1 * w

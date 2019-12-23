@@ -77,7 +77,7 @@ def chegada(arrivedEvent):
     global globalId, n_amostras
     n_amostras += 1
     if n_amostras < tamanho:
-        if random.random() <= la1/(la1+la2):
+        if arrivedEvent.priority == ALTA:
             updateNextArrival(ALTA, la1)
         else:
             updateNextArrival(BAIXA, la2)
@@ -210,9 +210,8 @@ def updateTimeVariables():
 def loopPrincipal(tamanho):
     global actualTime, previousTime, preemptive, isFilaUnica
     global n_amostras, tempoOcupado
-    if(random.random() <= la1/(la1+la2)):
-        updateNextArrival(ALTA, la1)
-    else:
+    updateNextArrival(ALTA, la1)
+    if not la2 == 0:
         updateNextArrival(BAIXA, la2)
     while not eventos.empty():
         eventoAtual = eventos.pop_front()

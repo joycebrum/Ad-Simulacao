@@ -12,7 +12,7 @@ from plot import plotData
 import variables as variables
 import calculosMedia as cm
 
-tamanho = 100
+tamanho = 121
 
 def Q3():
     #executaCenario1(True)
@@ -22,8 +22,8 @@ def Q3():
 
 def Q4():
     #executaCenario1(False)
-    #executaCenario2(False)
-    executaCenario3(False)
+    executaCenario2(False)
+    #executaCenario3(False)
 
 
 def executaCenario1(isQ3):
@@ -85,8 +85,6 @@ def executaCenario(cenarios, isFilaUnica, maxLambda, tipoDeFila):
             vetorDePlotagemX2.append(cenario[0])
             vetorDePlotagemY2.append(pessoas)
         
-        
-    print("vetor De Plotagem Y = ", vetorDePlotagemY)
     plotFunction(vetorDePlotagemX, vetorDePlotagemY, maxLambda + 0.05 , maxPessoas+0.5)
     if tipoDeFila == 'u':
         plotData(vetorDePlotagemX2, vetorDePlotagemY2, maxLambda + 0.05,  maxPessoas+0.5)    
@@ -96,8 +94,8 @@ def executaCenario(cenarios, isFilaUnica, maxLambda, tipoDeFila):
 
 
 def main():
-    Q3()
-    #Q4()
+    #Q3()
+    Q4()
 
         
 
