@@ -6,15 +6,16 @@ from simulador import imprimeTabela
 from variables import cenarios2
 
 
-tamanho = 100
+tamanho = 1000
 
 def executaCenario2FilaUnica():
     cenarios = cenarios2()
     for cenario in cenarios:
         inicializaGlobalVariables(cenario[0], cenario[1], 
                                   cenario[2], cenario[3], 
-                                  False, tamanho)
+                                  False, tamanho, "e")
         filaUnica()
+        imprimeTabela()
 
 def executaCenario2FilaPreempcao():
     cenarios = cenarios2()
@@ -22,7 +23,7 @@ def executaCenario2FilaPreempcao():
     for cenario in cenarios:
         inicializaGlobalVariables(cenario[0], cenario[1], 
                                   cenario[2], cenario[3], 
-                                  False, tamanho)
+                                  False, tamanho, "e")
         filaDuplaComPreempcao()
         imprimeTabela()
 
@@ -31,7 +32,7 @@ def executaCenario2FilaSemPreempcao():
     for cenario in cenarios:
         inicializaGlobalVariables(cenario[0], cenario[1], 
                                   cenario[2], cenario[3], 
-                                  False, tamanho)
+                                  False, tamanho, "e")
         filaDuplaSemPreempcao()
         imprimeTabela()
         

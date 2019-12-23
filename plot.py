@@ -6,6 +6,8 @@ Created on Fri Dec 20 20:54:19 2019
 """
 
 import matplotlib.pyplot as plt
+from variables import ALTA
+from variables import BAIXA
 
 Clientes_X = [0]
 Clientes_X_Max = 0
@@ -58,6 +60,28 @@ def updateGrafoEsperaFilaUnica(fila, time):
     Espera_Y.append(clientesNaFila)
     if clientesNaFila > Clientes_Y_Max:
         Espera_Y_Max = clientesNaFila
+    nq1, nq2 = getQuantFilaPorClasse(fila)
+    updateEsperaFilaUnicaComClasse(nq1, ALTA, time)
+    updateEsperaFilaUnicaComClasse(nq2, BAIXA, time)
+
+def getQuantFilaPorClasse(fila):
+    nq1 = 0
+    nq2 = 0
+    for cliente in fila:
+        if cliente.priority == ALTA:
+            nq1 += 1
+        else:
+            nq2 += 1
+    return nq1, nq2
+
+def updateEsperaFilaUnicaComClasse(nq, priority, time):
+    global Espera_X_Classe, Espera_Y_Classe 
+    global Espera_X_Classe_Max, Espera_Y_Classe_Max
+    Espera_X_Classe[priority].append(time)
+    Espera_X_Classe_Max[priority] = time
+    Espera_Y_Classe[priority].append(nq)
+    if nq > Espera_Y_Classe_Max[priority]:
+        Espera_Y_Classe_Max[priority] = nq
 
 def updateGrafoTrabalhoResidual(servidor,time):
     global Trabalho_Residual_X, Trabalho_Residual_Y
