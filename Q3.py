@@ -29,8 +29,10 @@ def executaCenarioExp(cenarios, isFilaUnica):
         inicializaGlobalVariables(cenario[0], cenario[1], 
                                   cenario[2], cenario[3], 
                                   False, tamanho)
-        la = cenario[0] + cenario[1]
-        mi = cenario[2] + cenario[3]
+        la1 = cenario[0]
+        la2 = cenario[1]
+        mi1 = cenario[2]
+        mi2 = cenario[3]
         if isFilaUnica:
             tempo = filaUnica()
             pessoas = cm.Nq_filaUnica(tempo)
@@ -50,7 +52,7 @@ def executaCenarioExp(cenarios, isFilaUnica):
         vetorDePlotagemY.append(pessoas)
         vetorDePlotagemY.append(0)
         
-        pessoas = cm.NqAnalitico(la, mi)
+        pessoas = cm.NqAnalitico(la1, la2, mi1, mi2, isFilaUnica)
         if maxPessoas < pessoas:
             maxPessoas = pessoas
             
