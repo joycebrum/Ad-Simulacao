@@ -143,7 +143,8 @@ def getUAnalitico_NPreemptive():
     p2 = Ro_Analitico(BAIXA)
     p = Ro_Geral(True)
     W1_Analitico = pXr/(1-p1)
-    print("p = ", p)
+    if p == 1:
+        return 99999
     W2_Analitico = (p1*W1_Analitico + pXr)/(1-p)
     return p1*W1_Analitico + p2*W2_Analitico + pXr
 
@@ -151,14 +152,21 @@ def getUAnalitico_Preemptive():
     p1 = Ro_Analitico(ALTA)
     p2 = Ro_Analitico(BAIXA)
     p = Ro_Geral(True)
+    if p == 1:
+        return 99999
     W1_Analitico = p1/(mi1*(1-p1))
     W2_Analitico = (p1*W1_Analitico + pXr + p1/mi2)/(1-p)
     return p1*W1_Analitico + p2*W2_Analitico + pXr
 
-def getUAnalitico_Unica():
-    p =  Ro_Geral(False)
-    W = p/(mi2 * (1-p))
-    return p*W + pXr
+def getUAnalitico_Unica(la1, la2, mi1, mi2):
+    p1 = la1/mi1
+    p2 = la2/mi2
+    if p1 + p2 == 1:
+        return 99999
+    pXr = p1/mi1 + p2/mi2
+    W = pXr/(1-p1-p2)
+    print("nq=", NqAnalitico(la1, la2, mi1, mi2, True), "w=",W)
+    return NqAnalitico(la1, la2, mi1, mi2, True)/(mi1+mi2) + pXr
 
 def getMediaAmostralFila():
     Nq1 = ic.mediaAmostral(plot.Espera_Y_Classe[ALTA])
@@ -171,18 +179,26 @@ def printTabelaFilaClasse(actualTime, totalClientes, la1t, la2t, mi1t, mi2t, pre
     la2 = la2t
     mi1 = mi1t
     mi2 = mi2t
-    pXr = Ro_Analitico(ALTA)*1/mi1 + Ro_Analitico(BAIXA)*1/mi2
+    p1 = la1/mi1
+    p2 = la2/mi2
+    pXr = p1/mi1 + p2/mi2
     if isFilaUnica:
         p =  Ro_Geral(not isFilaUnica)
         pXr = p*1/mi2
-        U_Analitico = getUAnalitico_Unica()
+        U_Analitico = getUAnalitico_Unica(la1, la2, mi1, mi2)
     elif preemptive:
         U_Analitico = getUAnalitico_Preemptive()
     else:
         U_Analitico = getUAnalitico_NPreemptive()
     U = Nq(actualTime, ALTA)*1/mi1 + Nq(actualTime, BAIXA)*1/mi2 + pXr
     teams_list = ["E[U](2)", "E[U](3)", "E[Nq1]", "E[Nq2]", "E[U](4)"]
-    data = np.array([[round(pXr/(1 - Ro_Geral(not isFilaUnica)), 2),
+    if Ro_Geral(not isFilaUnica) == 1:
+        U_Analitico_2 = 99999
+    elif isFilaUnica:
+        U_Analitico_2 = pXr/(1 - p1 - p2)
+    else:
+        U_Analitico_2 = pXr/(1 - p1 - p2)
+    data = np.array([[round(U_Analitico_2, 2),
                       round(U_Analitico, 2),
                       round(Nq(actualTime, ALTA), 2), 
                       round(Nq(actualTime, BAIXA), 2),
