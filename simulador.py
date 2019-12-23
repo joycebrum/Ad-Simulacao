@@ -53,6 +53,7 @@ preemptive = False
 eventos = SLinkedList()
 clientesPrio = queue.Queue()
 clientesNPrio = queue.Queue()
+clientesFilaUnica = queue.Queue()
 
 globalId = 0
 
@@ -74,7 +75,7 @@ def chegada(arrivedEvent):
     global globalId, n_amostras
     n_amostras += 1
     if n_amostras < tamanho:
-        if(random.random() <= la1/(la1+la2)):
+        if random.random() <= la1/(la1+la2):
             updateNextArrival(ALTA, la1)
         else:
             updateNextArrival(BAIXA, la2)
@@ -110,8 +111,11 @@ def saida(exitEvent, mi):
     else:
         queueTime[servidor.id] = getExecutedTime()
     #terminando conta do tempo medio
-        
-    if not clientesPrio.empty() :
+    if isFilaUnica:
+        if clientesFilaUnica.empty():
+            nextClient = clientesFilaUnica.get()
+            serverClient(nextClient)
+    elif not clientesPrio.empty() :
         nextClient = clientesPrio.get()
         serverClient(nextClient)
     else:
@@ -130,7 +134,9 @@ def checkServer(cliente):
     elif preemptive and cliente.priority < servidor.priority:
         interrupt(cliente)
     else:
-        if cliente.priority == ALTA:
+        if isFilaUnica:
+            clientesFilaUnica.put(Client(cliente.priority, cliente.id, cliente.clientData))
+        elif cliente.priority == ALTA:
             clientesPrio.put(Client(cliente.priority,cliente.id, cliente.clientData))
         else:
              clientesNPrio.put(Client(cliente.priority,cliente.id, cliente.clientData))
@@ -140,14 +146,9 @@ def interrupt(cliente):
         printCliente(cliente, "interrompeu")
         printCliente(servidor, "foi interrompido")
     eventos.removeIfExistExitEvent()
-    #fazendo conta do tempo medio do cara que ta saindo
-    if servidor.id in queueTime:
-        queueTime[servidor.id] += getExecutedTime()
-    else:
-        queueTime[servidor.id] = getExecutedTime()
-    #terminando conta do tempo medio
-    
-    if servidor.priority == ALTA:
+    if isFilaUnica:
+        clientesFilaUnica.put(servidor)
+    elif servidor.priority == ALTA:
         clientesPrio.put(servidor)
     else:
         clientesNPrio.put(servidor)
@@ -195,6 +196,10 @@ def updateTimeVariables():
 def loopPrincipal(tamanho):
     global actualTime, previousTime, preemptive, isFilaUnica
     global n_amostras, tempoOcupado
+    if(random.random() <= la1/(la1+la2)):
+        updateNextArrival(ALTA, la1)
+    else:
+        updateNextArrival(BAIXA, la2)
     while not eventos.empty():
         eventoAtual = eventos.pop_front()
         previousTime = actualTime
@@ -215,35 +220,26 @@ def loopPrincipal(tamanho):
     print("\n Tabela para os valores de lamda1, lamda2, mi1, mi2 = ", la1, la2, mi1, mi2)
     calculosMedia.printTabelaFilaClasse(actualTime, totalClientes, la1, la2, mi1,mi2, preemptive, isFilaUnica)
 
-def filaUnica(la1, mi1):
+def filaUnica():
     global actualTime, previousTime, preemptive, isFilaUnica
-    global n_amostras
+    global n_amostras, la2, mi2
     isFilaUnica = True
     preemptive = False
-    updateNextArrival(BAIXA, la1)
     loopPrincipal(tamanho)
+    return actualTime
 
-
-def filaDuplaComPreempcao(la1, la2, mi1, mi2):
+def filaDuplaComPreempcao():
     global actualTime, previousTime, preemptive, isFilaUnica
     global n_amostras
     isFilaUnica = False
     preemptive = True
-    if(random.random() <= la1/(la1+la2)):
-        updateNextArrival(ALTA, la1)
-    else:
-        updateNextArrival(BAIXA, la2)
     loopPrincipal(tamanho)
 
-def filaDuplaSemPreempcao(la1, la2, mi1, mi2):
+def filaDuplaSemPreempcao():
     global actualTime, previousTime, preemptive, isFilaUnica
     global n_amostras
     isFilaUnica = False
     preemptive = False
-    if(random.random() <= la1/(la1+la2)):
-        updateNextArrival(ALTA, la1)
-    else:
-        updateNextArrival(BAIXA, la2)
     loopPrincipal(tamanho)
     
 
@@ -275,9 +271,8 @@ def printCliente(cliente, evento):
     cliente.clientData.console()
     print("\n")
 def printDadosSistema():
-    if not isFilaUnica:
-        print('Fila Alta Prioridade: ', end = '')
-        printDadosClientFila(clientesPrio)
+    print('Fila Alta Prioridade: ', end = '')
+    printDadosClientFila(clientesPrio)
     print('Fila Baixa Prioridade: ', end = '')
     printDadosClientFila(clientesNPrio)
     if servidor != None:

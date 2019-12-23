@@ -40,6 +40,9 @@ def Xr(totalClientes, classe):
 def Nq(actualTime, classe):
     return numeroMedio(actualTime,plot.Espera_X_Classe[classe], plot.Espera_Y_Classe[classe])
 
+def NqAnalitico(la, mi):
+    return ( ( pow(la,2)/pow(mi,2) ) / ( 1-(la/mi) ) )
+
 def W(totalClientes, classe):
     return tempoMedio(totalClientes[classe],plot.Espera_X_Classe[classe], plot.Espera_Y_Classe[classe])
 
@@ -61,22 +64,6 @@ def Ro_Geral(comClasse):
         return la1/mi1 + la2/mi2
     else:
         return la2/mi2
-
-
-def printTabelaFilaUnica(actualTime, totalClientes, ro):
-    teams_list = ["E[N]", "E[T]", "E[Nq]", "E[W]"]
-    data = np.array([[round( numeroMedio(actualTime, plot.Clientes_X, plot.Clientes_Y), 2), 
-                      round( tempoMedio(totalClientes[1], plot.Clientes_X, plot.Clientes_Y), 2),
-                      round( numeroMedio(actualTime, plot.Espera_X, plot.Espera_Y), 2), 
-                      round( tempoMedio(totalClientes[1], plot.Espera_X, plot.Espera_Y), 2)
-                    ]])
-    printTabela(teams_list, data)
-    
-    teams_list = ["E[Xr]"]
-    data = np.array([[round(tempoMedio(totalClientes[1], plot.Trabalho_Residual_X, plot.Trabalho_Residual_Y), 2)]])
-    printTabela(teams_list,data)
-    
-
 
 def getUAnalitico_NPreemptive():
     p1 = Ro_Analitico(ALTA)

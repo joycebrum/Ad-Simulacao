@@ -142,9 +142,9 @@ def plotData(xdados, y):
     plt.axis([0, 450, 0, 100])
     plt.show()
     
-def plotFunction(x, y):
+def plotFunction(x, y, x_max, y_max):
     plt.plot(x, y)
-    plt.axis([0, 450, 0, 100])
+    plt.axis([0, x_max, 0, y_max])
     
 def clean():
     global Clientes_X, Clientes_X_Max, Clientes_Y, Clientes_Y_Max, Clientes_X_Classe
