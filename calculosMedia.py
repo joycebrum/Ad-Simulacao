@@ -224,13 +224,23 @@ def getUAnalitico_Unica(la1, la2, mi1, mi2):
     p2 = la2/mi2
     if p1 + p2 == 1:
         return 99999
-    pXr = p1/mi1 + p2/mi2s
-    return NqAnaliticoExp(la1, la2, mi1, mi2, True)/(mi1+mi2) + pXr
+    pXr = p1/mi1 + p2/mi2
+    pessoas = NqAnaliticoExp(la1, la2, mi1, mi2, True)
+    return (pessoas[0] + pessoas[1]) /(mi1+mi2) + pXr
 
 def getMediaAmostralFila():
     Nq1 = ic.mediaAmostral(plot.Espera_Y_Classe[ALTA])
     Nq2 = ic.mediaAmostral(plot.Espera_Y_Classe[BAIXA])
     return [round(Nq1,3), round(Nq2,3)]
+
+def getDistribuicaoU():
+    retorno = []
+    nq1 =  plot.Espera_Y_Classe[ALTA]
+    nq2 =  plot.Espera_Y_Classe[BAIXA]
+    for i in range(len(nq1)):
+        temp = (nq1[i]/mi1) + (nq2[i]/mi2) + (la1/pow(mi1,2)) + (la2/pow(mi2,2))
+        retorno.append(temp)
+    return retorno
 
 def printTabelaFilaClasse(actualTime, totalClientes, la1t, la2t, mi1t, mi2t, preemptive, isFilaUnica):
     global la1, la2, mi1, mi2, pXr
@@ -259,9 +269,9 @@ def printTabelaFilaClasse(actualTime, totalClientes, la1t, la2t, mi1t, mi2t, pre
         U_Analitico_2 = pXr/(1 - p1 - p2)
     data = np.array([[round(U_Analitico_2, 2),
                       round(U_Analitico, 2),
-                      round(Nq(actualTime, ALTA), 2), 
-                      round(Nq(actualTime, BAIXA), 2),
-                      round(U, 2)
+                      "{0}±{1}".format(round(Nq(actualTime, ALTA), 2), round(ic.calculaIntervaloDeConfianca(plot.Espera_Y_Classe[ALTA]),2)), 
+                      "{0}±{1}".format(round(Nq(actualTime, BAIXA), 2), round(ic.calculaIntervaloDeConfianca(plot.Espera_Y_Classe[BAIXA]),2)),
+                      "{0}±{1}".format(round(U, 2), round(ic.calculaIntervaloDeConfianca(getDistribuicaoU()),2))
                     ]])
     printTabela(teams_list, data)
     
@@ -276,7 +286,10 @@ def printTabela(teams_list, data):
     row_format ="{:>15}" * (len(teams_list) + 1)
     print(row_format.format("", *teams_list))
     for team, row in zip(teams_list, data):
-        print(row_format.format("", *row))
+        if team == "E[Nq1]" or teams_list == "E[Nq2]" or teams_list == "E[U](4)":
+            print(row_format.format("", *row),"=/-", )
+        else:
+            print(row_format.format("", *row))
     
     print("\n")
 
