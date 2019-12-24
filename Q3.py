@@ -25,24 +25,24 @@ def Q3_B():
 
 def Q3_A():
     ## LETRA A ##
-    executaCenario1(True, True)
+    #executaCenario1(True, True)
     #executaCenario2(True, True)
     #executaCenario3(True, True)
-    #executaCenario4(True, True)
+    executaCenario4(True, True)
     
 def Q4_B():
     ## LETRA B ##
-    executaCenario1(False, False)
+    #executaCenario1(False, False)
     #executaCenario2(False, False)
     #executaCenario3(False, False)
-    #executaCenario4(False, False)
+    executaCenario4(False, False)
 
 def Q4_A():
     ## LETRA A ##
     #executaCenario1(False, True)
     #executaCenario2(False, True)
-    executaCenario3(False, True)
-    #executaCenario4(False, True)
+    #executaCenario3(False, True)
+    executaCenario4(False, True)
 
 
 def executaCenario1(isQ3, isA):
@@ -201,7 +201,7 @@ def executaCenarioB(cenarios, isFilaUnica, maxLambda, tipoDeFila):
 
 def main():
     #Q3()
-    Q4_B()
+    Q3_A()
 
         
 
