@@ -16,31 +16,33 @@ import plot as pl
 
 tamanho = 121
 
-def Q3():
+def Q3_B():
+    ## LETRA B ##
+    #executaCenario1(True, False)
+    #executaCenario2(True, False)
+    #executaCenario3(True, False)
+    executaCenario4(True, False)
+
+def Q3_A():
     ## LETRA A ##
-    #executaCenario1(True, True)
+    executaCenario1(True, True)
     #executaCenario2(True, True)
     #executaCenario3(True, True)
     #executaCenario4(True, True)
     
+def Q4_B():
     ## LETRA B ##
-    executaCenario1(True, False)
-    #executaCenario2(True, False)
-    #executaCenario3(True, False)
-    #executaCenario4(True, False)
-    
-def Q4():
-     ## LETRA A ##
-    #executaCenario1(False, True)
-    #executaCenario2(False, True)
-    #executaCenario3(False, True)
-    #executaCenario4(False, True)
-    
-     ## LETRA B ##
-    #executaCenario1(False, False)
-    executaCenario2(False, False)
+    executaCenario1(False, False)
+    #executaCenario2(False, False)
     #executaCenario3(False, False)
     #executaCenario4(False, False)
+
+def Q4_A():
+    ## LETRA A ##
+    #executaCenario1(False, True)
+    #executaCenario2(False, True)
+    executaCenario3(False, True)
+    #executaCenario4(False, True)
 
 
 def executaCenario1(isQ3, isA):
@@ -84,14 +86,16 @@ def executaCenarioA(cenarios, isFilaUnica, maxLambda, tipoDeFila):
         if isFilaUnica:
             tempo = filaUnica()[0]
             pessoas = cm.Nq_filaUnica(tempo)
+            print("para lambda1 = ", la1, " intervalo de confiança de +/-", round(calculaIntervaloDeConfianca(pl.Espera_Y),2))
+       
         else:
-            tempo = filaDuplaSemPreempcao()
+            tempo = filaDuplaSemPreempcao()[0]
             pessoas = cm.Nq(tempo, variables.ALTA) + cm.Nq(tempo, variables.BAIXA)
+            print("para lambda1 = ", la1, " intervalo de confiança de +/-", round(calculaIntervaloDeConfianca(pl.Espera_Y_Classe[variables.ALTA]),2), "para a classe 1 e de +-", round(calculaIntervaloDeConfianca(pl.Espera_Y_Classe[variables.BAIXA]),2), " para a classe 2")
+            
         if maxPessoas < pessoas:
             maxPessoas = pessoas
-        
-        print("para lambda1 = ", la1, " intervalo de confiança de +/-", calculaIntervaloDeConfianca(pl.Espera_Y))
-        
+         
         vetorDePlotagemX.append(cenario[0]-0.025)
         vetorDePlotagemX.append(cenario[0]-0.025)
         vetorDePlotagemX.append(cenario[0]+0.025)
@@ -125,9 +129,8 @@ def executaCenarioA(cenarios, isFilaUnica, maxLambda, tipoDeFila):
 def executaCenarioB(cenarios, isFilaUnica, maxLambda, tipoDeFila):
     vetorDePlotagemX = []
     vetorDePlotagemY1 = []
+    vetorDePlotagemX2 = []
     vetorDePlotagemY2 = []
-    vetorDePlotagemXA = []
-    vetorDePlotagemYA = []
     
     maxTempo = 0
     for cenario in cenarios:
@@ -149,7 +152,7 @@ def executaCenarioB(cenarios, isFilaUnica, maxLambda, tipoDeFila):
             totalPessoas = vetorTimePessoas[1]
             tempo = cm.W_filaUnica(totalPessoas)
             distribuicaoTempoDeEspera = cm.tempoEspera_FilaUnica(vetorTimePessoas[1], vetorTimePessoas[0])
-            print("para lambda1 = ", la1, " intervalo de confiança de +/-", calculaIntervaloDeConfianca(distribuicaoTempoDeEspera))
+            print("para lambda1 = ", la1, " intervalo de confiança de +/-", round(calculaIntervaloDeConfianca(distribuicaoTempoDeEspera),2))
             
             vetorDePlotagemY1.append(0)
             vetorDePlotagemY1.append(tempo)
@@ -161,59 +164,44 @@ def executaCenarioB(cenarios, isFilaUnica, maxLambda, tipoDeFila):
             totalPessoas = vetorTimePessoas[1]
             tempo1 = cm.W(totalPessoas, variables.ALTA)
             tempo2 = cm.W(totalPessoas, variables.BAIXA)
+            tempo = cm.getWGeral(tempo1, tempo2, la1, la2)
             distribuicaoTempoDeEspera1 = cm.tempoEspera(vetorTimePessoas[1], vetorTimePessoas[0], variables.ALTA)
             distribuicaoTempoDeEspera2 = cm.tempoEspera(vetorTimePessoas[1], vetorTimePessoas[0], variables.BAIXA)
-            print("para lambda1 = ", la1, " intervalo de confiança de +/-", calculaIntervaloDeConfianca(distribuicaoTempoDeEspera1), "para a classe 1 e de +-", calculaIntervaloDeConfianca(distribuicaoTempoDeEspera2), " para a classe 2")
+            print("para lambda1 = ", la1, " intervalo de confiança de +/-", round(calculaIntervaloDeConfianca(distribuicaoTempoDeEspera1),2), "para a classe 1 e de +-", round(calculaIntervaloDeConfianca(distribuicaoTempoDeEspera2),2), " para a classe 2")
             vetorDePlotagemY1.append(0)
-            vetorDePlotagemY1.append(tempo1)
-            vetorDePlotagemY1.append(tempo1)
+            vetorDePlotagemY1.append(tempo)
+            vetorDePlotagemY1.append(tempo)
             vetorDePlotagemY1.append(0)
-            
-            vetorDePlotagemY2.append(0)
-            vetorDePlotagemY2.append(tempo2)
-            vetorDePlotagemY2.append(tempo2)
-            vetorDePlotagemY2.append(0)
         
-        if maxTempo < tempo1:
-            maxTempo = tempo1
-            
-        if maxTempo < tempo2:
-            maxTempo = tempo2
-        
-        
-       
-        '''
-        vetorDePlotagemY.append(0)
-        vetorDePlotagemY.append(tempo)
-        vetorDePlotagemY.append(tempo)
-        vetorDePlotagemY.append(0)
+        if maxTempo < tempo:
+            maxTempo = tempo
         
         if tipoDeFila == 'e':
-            pessoasSeparadoPorClasse = cm.NqAnaliticoExp(la1, la2, mi1, mi2, isFilaUnica)
+            tempoSeparadoPorClasse = cm.WAnaliticoExp(la1, la2, mi1, mi2, isFilaUnica)
         elif tipoDeFila == 'd':
-            pessoasSeparadoPorClasse = cm.NqAnaliticoDeter(la1, la2, mi1, mi2, isFilaUnica)
+            tempoSeparadoPorClasse = cm.WAnaliticoDeter(la1, la2, mi1, mi2, isFilaUnica)
         elif tipoDeFila == 'u':
-            pessoasSeparadoPorClasse = cm.NqAnaliticoUni(la1, la2, mi1, mi2, isFilaUnica)
-        tempo = tempoSeparadoPorClasse[0] + tempoSeparadoPorClasse[1]
-        if pessoas >= 0:
-            if maxTempo < pessoas:
-                maxTempo = pessoas
+            tempoSeparadoPorClasse = cm.WAnaliticoUni(la1, la2, mi1, mi2, isFilaUnica)
+        tempoAnalitico = tempoSeparadoPorClasse[0] + tempoSeparadoPorClasse[1]
+        if tempoAnalitico >= 0:
+            if maxTempo < tempoAnalitico:
+                maxTempo = tempoAnalitico
                 
-            vetorDePlotagemX2.append(cenario[0])
-            vetorDePlotagemY2.append(pessoas)
-        '''
+            vetorDePlotagemX2.append(la1)
+            vetorDePlotagemY2.append(tempoAnalitico)
+            
     plotFunction(vetorDePlotagemX, vetorDePlotagemY1, maxLambda + 0.05 , maxTempo+0.5)
-    plotFunction(vetorDePlotagemX, vetorDePlotagemY2, maxLambda + 0.05 , maxTempo+0.5)
-    '''if tipoDeFila == 'u':
+    #plotFunction(vetorDePlotagemX, vetorDePlotagemY2, maxLambda + 0.05 , maxTempo+0.5)
+    if tipoDeFila == 'u':
         plotData(vetorDePlotagemX2, vetorDePlotagemY2, maxLambda + 0.05,  maxTempo+0.5)    
     else:
         plotFunction(vetorDePlotagemX2, vetorDePlotagemY2, maxLambda + 0.05,  maxTempo+0.5)
-    '''
+    
 
 
 def main():
     #Q3()
-    Q4()
+    Q4_B()
 
         
 

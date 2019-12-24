@@ -66,16 +66,18 @@ def NqAnaliticoExp(la1,la2, mi1, mi2, isFilaUnica):
 def NqAnaliticoDeter(la1,la2, mi1, mi2, isFilaUnica):
     p1 = la1/mi1
     p2 = la2/mi2
+    pXr = p1/(2*mi1) + p2/(2*mi2)
     ## Questão 3 - cenario 3 ##
     if not la1 == 0.6 and la2 == 0.2:
         if isFilaUnica:
-            w = (p1/(2*mi1) + p2/(2*mi2)) / (1-p1-p2)
+            w = pXr / (1-p1-p2)
             nq1 = la1 * w
             nq2 = la2 * w
             return [nq1, nq2]
-        ## Questão 4 - cenario 3 ##
+        ## Questão 4 - cenario 3 m1=[a1, b1] mi2=##
         else:
-            print("TODO")
+            ws = WAnaliticoDeter(la1, la2, mi1, mi2, isFilaUnica) 
+            return [la1*ws[0], la2*ws[1]]
     else:
         return [-1, 0]
     
@@ -96,7 +98,62 @@ def NqAnaliticoUni(la1,la2, mi1, mi2, isFilaUnica):
         return [nq1, nq2]
      ## Questão 4 - cenario 4 ##
     else:
-        print("TODO")
+        ws = WAnaliticoUni(la1, la2, mi1, mi2, isFilaUnica)
+        return [la1*ws[0], la2*ws[1]]
+        
+
+def WAnaliticoExp(la1,la2, mi1, mi2, isFilaUnica):
+    p1 = la1/mi1
+    p2 = la2/mi2
+    ## Questão 3 - cenario 1 e 2 ##
+    if not (la1 == 0.6 and la2 == 0.2):
+        if isFilaUnica:
+            w = (p1/mi1+p2/mi2) / (1-p1-p2)
+            return [w, w]
+        ## Questão 4 - cenario 1 e 2 ##
+        else: #sem preempção
+            pXr = p1/mi1 + p2/mi2
+            w1 = pXr/(1-p1)
+            w2 = (p1*w1 + pXr)/(1-p1-p2)
+            return [w1, w2]
+    else:
+        return [-1,0]
+def WAnaliticoDeter(la1,la2, mi1, mi2, isFilaUnica):
+    p1 = la1/mi1
+    p2 = la2/mi2
+    pXr = p1/(2*mi1) + p2/(2*mi2)
+    ## Questão 3 - cenario 3 ##
+    if not la1 == 0.6 and la2 == 0.2:
+        if isFilaUnica:
+            w = pXr / (1-p1-p2)
+            return [w, w]
+        ## Questão 4 - cenario 3 ##
+        else:
+            w1 = pXr / (1-p1)
+            w2 = (p1*w1 + pXr)/(1-p1-p2)
+            return [w1, w2]
+    else:
+        return [-1, 0]
+    
+def WAnaliticoUni(la1,la2, mi1, mi2, isFilaUnica):
+    a1 = mi1[0]
+    a2 = mi2[0]
+    b1 = mi1[1]
+    b2 = mi2[1]
+    p1 = la1*(a1+b1)/2
+    p2 = la2*(a2+b2)/2
+    p1Xr1 = p1*(pow(a1,2) + a1*b1 + pow(b1,2)) / (3*(a1+b1))
+    p2Xr2 = p2*(pow(a2,2) + a2*b2 + pow(b2,2)) / (3*(a2+b2))
+    pXr = p1Xr1 + p2Xr2
+    ## Questão 3 - cenario 4 ##
+    if isFilaUnica:
+        w = pXr/(1-p1-p2)
+        return [w, w]
+     ## Questão 4 - cenario 4 ##
+    else:
+        w1 = pXr/(1-p1)
+        w2 = (p1*w1 + pXr)/(1-p1-p2)
+        return [w1, w2]
         
         
 def W(totalClientes, classe):
@@ -104,6 +161,10 @@ def W(totalClientes, classe):
 
 def W_filaUnica(totalClientes):
     return tempoMedio(totalClientes[0] + totalClientes[1],plot.Espera_X, plot.Espera_Y)
+
+def getWGeral(tempo1, tempo2, la1, la2):
+    la = la1 + la2
+    return la1*tempo1/la + la2*tempo2/la
 
 def tempoEspera_FilaUnica(totalClientes, actualTime):
     w = []
